@@ -18,15 +18,9 @@ CREATE TABLE IF NOT EXISTS paper_chunks (
   paper_id UUID NOT NULL REFERENCES papers(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
   chunk_index INTEGER NOT NULL,
-  embedding VECTOR(1536), -- OpenAI text-embedding-3-small dimension
+  embedding VECTOR(1536),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
--- Create an index for fast vector similarity search
-CREATE INDEX IF NOT EXISTS paper_chunks_embedding_idx 
-ON paper_chunks 
-USING ivfflat (embedding vector_cosine_ops)
-WITH (lists = 100);
 
 -- Create index on paper_id for faster joins
 CREATE INDEX IF NOT EXISTS paper_chunks_paper_id_idx ON paper_chunks(paper_id);
