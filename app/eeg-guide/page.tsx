@@ -1,0 +1,982 @@
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { 
+  BookOpen, 
+  ChevronRight, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Info,
+  Clock,
+  Users,
+  Zap,
+  Droplets,
+  Settings,
+  Trash2,
+  ArrowLeft,
+  ChevronDown,
+  Play,
+  Pause
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Progress } from "@/components/ui/progress"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { EEGWaveform } from "@/components/eeg-waveform"
+
+const sections = [
+  { id: "overview", title: "Overview", icon: Info },
+  { id: "preparation", title: "Preparation", icon: Users },
+  { id: "setup", title: "Cap Setup", icon: Settings },
+  { id: "gel", title: "Gel Application", icon: Droplets },
+  { id: "recording", title: "Recording", icon: Zap },
+  { id: "cleanup", title: "Cleanup", icon: Trash2 },
+]
+
+const equipmentList = [
+  { name: "BioSemi ActiveTwo System", required: true },
+  { name: "EEG Cap (appropriate size)", required: true },
+  { name: "Electrodes (64 or 128 channel)", required: true },
+  { name: "SignaGel or similar conductive gel", required: true },
+  { name: "Blunt-tip syringes (10-20ml)", required: true },
+  { name: "Measuring tape (for head circumference)", required: true },
+  { name: "Alcohol prep pads", required: true },
+  { name: "Cotton swabs", required: true },
+  { name: "Towels and tissues", required: true },
+  { name: "Chin strap (optional)", required: false },
+  { name: "Electrode gel applicator sticks", required: false },
+  { name: "Reference/ground electrodes", required: true },
+]
+
+const capSizes = [
+  { size: "Extra Small", circumference: "< 52 cm", typical: "Young children" },
+  { size: "Small", circumference: "52-54 cm", typical: "Children, small adults" },
+  { size: "Medium", circumference: "54-58 cm", typical: "Most adults" },
+  { size: "Large", circumference: "58-62 cm", typical: "Large adults" },
+]
+
+const troubleshooting = [
+  { 
+    problem: "High impedance on specific electrode", 
+    solution: "Add more gel, gently abrade scalp with cotton swab, ensure electrode is making contact with scalp"
+  },
+  { 
+    problem: "Widespread high impedances", 
+    solution: "Check reference electrodes, ensure cap is properly positioned, verify cable connections"
+  },
+  { 
+    problem: "60Hz noise in signal", 
+    solution: "Check grounding, move cables away from power sources, ensure participant is not touching metal"
+  },
+  { 
+    problem: "Drifting baseline", 
+    solution: "Allow system to stabilize, check for loose connections, ensure gel hasn't dried out"
+  },
+  { 
+    problem: "Muscle artifact", 
+    solution: "Ask participant to relax jaw and forehead, check electrode placement near muscles"
+  },
+]
+
+export default function EEGGuidePage() {
+  const [activeSection, setActiveSection] = useState("overview")
+  const [completedSteps, setCompletedSteps] = useState<string[]>([])
+
+  const toggleStep = (step: string) => {
+    setCompletedSteps(prev => 
+      prev.includes(step) 
+        ? prev.filter(s => s !== step)
+        : [...prev, step]
+    )
+  }
+
+  const progress = (completedSteps.length / 12) * 100
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2">
+              <BookOpen className="size-5 text-primary" />
+              <span className="font-serif text-lg font-semibold">NormLit</span>
+            </Link>
+            <span className="text-muted-foreground">/</span>
+            <span className="text-sm font-medium">EEG Study Guide</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="size-4" />
+              <span>Est. setup time: 30-45 min</span>
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+          {/* Sidebar Navigation */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 space-y-6">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Progress</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Progress value={progress} className="h-2" />
+                  <p className="text-xs text-muted-foreground">
+                    {completedSteps.length} of 12 steps completed
+                  </p>
+                </CardContent>
+              </Card>
+
+              <nav className="space-y-1">
+                {sections.map((section) => (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                      activeSection === section.id
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <section.icon className="size-4" />
+                    {section.title}
+                  </button>
+                ))}
+              </nav>
+
+              <Card className="bg-muted/50">
+                <CardContent className="pt-4">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="size-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">Safety First</p>
+                      <p className="text-xs text-muted-foreground">
+                        Always follow your lab&apos;s IRB-approved protocols and safety guidelines.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="space-y-8">
+            {/* Hero Section */}
+            <div className="relative overflow-hidden rounded-xl border border-border bg-card">
+              <div className="absolute inset-0 bg-grid opacity-50" />
+              <div className="relative p-8 md:p-12">
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  <div className="flex-1 space-y-4">
+                    <Badge variant="secondary" className="font-mono text-xs">
+                      BioSemi ActiveTwo Protocol
+                    </Badge>
+                    <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">
+                      Complete EEG Study Guide
+                    </h1>
+                    <p className="text-lg text-muted-foreground max-w-2xl">
+                      A comprehensive, step-by-step guide for conducting EEG studies using the 
+                      BioSemi ActiveTwo system. From participant preparation to data cleanup.
+                    </p>
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      <Badge variant="outline" className="gap-1">
+                        <Clock className="size-3" />
+                        30-45 min setup
+                      </Badge>
+                      <Badge variant="outline" className="gap-1">
+                        <Users className="size-3" />
+                        2 researchers recommended
+                      </Badge>
+                      <Badge variant="outline" className="gap-1">
+                        <Zap className="size-3" />
+                        64/128 channel
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="w-full md:w-64 h-32 rounded-lg overflow-hidden border border-border bg-background">
+                    <EEGWaveform 
+                      channels={4} 
+                      height={128} 
+                      showLabels={false}
+                      animated={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {sections.slice(1).map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className="group flex items-center gap-4 rounded-lg border border-border bg-card p-4 text-left transition-all hover:border-primary/50 hover:shadow-md"
+                >
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <section.icon className="size-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">{section.title}</p>
+                    <p className="text-sm text-muted-foreground">View steps</p>
+                  </div>
+                  <ChevronRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                </button>
+              ))}
+            </div>
+
+            {/* Tabbed Content */}
+            <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
+              <TabsList className="hidden">
+                {sections.map(s => <TabsTrigger key={s.id} value={s.id}>{s.title}</TabsTrigger>)}
+              </TabsList>
+
+              {/* Overview Tab */}
+              <TabsContent value="overview" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-2xl">Equipment Checklist</CardTitle>
+                    <CardDescription>
+                      Gather all materials before beginning the study session
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {equipmentList.map((item, i) => (
+                        <div
+                          key={i}
+                          className={`flex items-center gap-3 rounded-lg border p-3 ${
+                            item.required ? "border-border" : "border-dashed border-muted"
+                          }`}
+                        >
+                          <CheckCircle2 className={`size-5 ${item.required ? "text-primary" : "text-muted-foreground"}`} />
+                          <span className={item.required ? "" : "text-muted-foreground"}>
+                            {item.name}
+                          </span>
+                          {!item.required && (
+                            <Badge variant="outline" className="ml-auto text-xs">Optional</Badge>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-2xl">Cap Size Guide</CardTitle>
+                    <CardDescription>
+                      Measure head circumference at the widest point (above eyebrows, around occipital protuberance)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-border">
+                            <th className="py-3 px-4 text-left font-medium">Size</th>
+                            <th className="py-3 px-4 text-left font-medium">Circumference</th>
+                            <th className="py-3 px-4 text-left font-medium">Typical Use</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {capSizes.map((size, i) => (
+                            <tr key={i} className="border-b border-border/50">
+                              <td className="py-3 px-4 font-mono">{size.size}</td>
+                              <td className="py-3 px-4">{size.circumference}</td>
+                              <td className="py-3 px-4 text-muted-foreground">{size.typical}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card className="border-amber-500/20 bg-amber-500/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                        <AlertTriangle className="size-5" />
+                        Important Precautions
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-sm">
+                      <p>Screen for contraindications before each session:</p>
+                      <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+                        <li>History of epilepsy or seizures</li>
+                        <li>Open wounds or skin conditions on scalp</li>
+                        <li>Recent head injury</li>
+                        <li>Metal implants in head/neck area</li>
+                        <li>Allergies to electrode gel or adhesives</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-primary/20 bg-primary/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-primary">
+                        <Info className="size-5" />
+                        Best Practices
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3 text-sm">
+                      <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+                        <li>Ask participant to avoid hair products on study day</li>
+                        <li>Have participant arrive with dry hair</li>
+                        <li>Schedule adequate time for setup (45+ min)</li>
+                        <li>Prepare all equipment before participant arrives</li>
+                        <li>Keep room at comfortable temperature</li>
+                        <li>Minimize electronic interference sources</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              {/* Preparation Tab */}
+              <TabsContent value="preparation" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-2xl">Participant Preparation</CardTitle>
+                    <CardDescription>
+                      Steps to prepare the participant for EEG recording
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <StepCard
+                      step={1}
+                      title="Informed Consent"
+                      description="Review and obtain signed informed consent. Explain the procedure, duration, and what to expect."
+                      tips={["Use clear, non-technical language", "Allow time for questions", "Provide a copy of signed consent"]}
+                      completed={completedSteps.includes("prep-1")}
+                      onToggle={() => toggleStep("prep-1")}
+                      imageUrl="/images/eeg-consent.jpg"
+                    />
+                    
+                    <StepCard
+                      step={2}
+                      title="Measure Head Circumference"
+                      description="Using a flexible measuring tape, measure around the head at the widest point - just above the eyebrows and around the occipital protuberance."
+                      tips={["Measure twice for accuracy", "Round up if between sizes", "Record measurement in participant file"]}
+                      completed={completedSteps.includes("prep-2")}
+                      onToggle={() => toggleStep("prep-2")}
+                      imageUrl="/images/eeg-measure.jpg"
+                    />
+
+                    <StepCard
+                      step={3}
+                      title="Identify Anatomical Landmarks"
+                      description="Locate the nasion (bridge of nose), inion (bump at back of head), and preauricular points (in front of ears) for proper cap placement."
+                      tips={["Use a skin-safe marker if needed", "These landmarks ensure consistent placement", "Cz should be exactly between nasion-inion and preauricular points"]}
+                      completed={completedSteps.includes("prep-3")}
+                      onToggle={() => toggleStep("prep-3")}
+                      imageUrl="/images/eeg-landmarks.jpg"
+                    />
+
+                    <StepCard
+                      step={4}
+                      title="Prepare the Scalp"
+                      description="Have the participant sit comfortably. Part hair to expose scalp where reference electrodes will be placed. Gently clean skin with alcohol prep pad."
+                      tips={["Be gentle - avoid irritating the skin", "Let alcohol dry completely before gel application", "For external electrodes, clean mastoid areas"]}
+                      completed={completedSteps.includes("prep-4")}
+                      onToggle={() => toggleStep("prep-4")}
+                      imageUrl="/images/eeg-prep-scalp.jpg"
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Cap Setup Tab */}
+              <TabsContent value="setup" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-2xl">EEG Cap Setup</CardTitle>
+                    <CardDescription>
+                      Proper cap placement is critical for accurate recordings
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="relative aspect-video rounded-xl overflow-hidden border border-border bg-muted">
+                      <Image
+                        src="/images/eeg-cap-placement.jpg"
+                        alt="EEG cap placement diagram showing electrode positions"
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <p className="text-sm font-medium">10-20 System Electrode Placement</p>
+                        <p className="text-xs text-muted-foreground">Standard international electrode positioning system</p>
+                      </div>
+                    </div>
+
+                    <StepCard
+                      step={1}
+                      title="Select Correct Cap Size"
+                      description="Based on head circumference measurement, select the appropriate cap size. The cap should fit snugly but not cause discomfort."
+                      tips={["If between sizes, try smaller first", "Cap should not slide when participant moves head", "Ensure all electrode holes align with scalp"]}
+                      completed={completedSteps.includes("setup-1")}
+                      onToggle={() => toggleStep("setup-1")}
+                    />
+
+                    <StepCard
+                      step={2}
+                      title="Position the Cap"
+                      description="Place the cap on the participant's head. Align Cz (vertex) with the midpoint between nasion-inion and between preauricular points. Fpz should be 10% of nasion-inion distance above nasion."
+                      tips={["Have participant hold front of cap while you adjust back", "Check symmetry by comparing left and right electrode positions", "Cz should be at the very top of the head"]}
+                      completed={completedSteps.includes("setup-2")}
+                      onToggle={() => toggleStep("setup-2")}
+                      imageUrl="/images/eeg-position-cap.jpg"
+                    />
+
+                    <StepCard
+                      step={3}
+                      title="Secure the Cap"
+                      description="Fasten the chin strap (if using) and adjust any straps to ensure the cap is secure. The cap should not shift during head movements."
+                      tips={["Chin strap should be snug but comfortable", "Check that no electrodes are lifted off the scalp", "Ask participant if they feel any pressure points"]}
+                      completed={completedSteps.includes("setup-3")}
+                      onToggle={() => toggleStep("setup-3")}
+                    />
+
+                    <StepCard
+                      step={4}
+                      title="Connect to Amplifier"
+                      description="Connect the electrode cables to the BioSemi ActiveTwo amplifier. Ensure the ribbon cable is properly seated and locked. Power on the amplifier."
+                      tips={["Check that status LED indicates proper connection", "Route cables to minimize movement artifacts", "Ensure battery is fully charged before session"]}
+                      completed={completedSteps.includes("setup-4")}
+                      onToggle={() => toggleStep("setup-4")}
+                      imageUrl="/images/biosemi-connection.jpg"
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-xl">Electrode Layout Reference</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-3">
+                        <h4 className="font-medium">Frontal Electrodes</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {["Fp1", "Fp2", "F3", "F4", "F7", "F8", "Fz", "FC1", "FC2", "FC5", "FC6"].map(e => (
+                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <h4 className="font-medium">Central Electrodes</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {["C3", "C4", "Cz", "CP1", "CP2", "CP5", "CP6"].map(e => (
+                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <h4 className="font-medium">Parietal Electrodes</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {["P3", "P4", "P7", "P8", "Pz", "PO3", "PO4"].map(e => (
+                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <h4 className="font-medium">Occipital/Temporal</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {["O1", "O2", "Oz", "T7", "T8", "TP7", "TP8"].map(e => (
+                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Gel Application Tab */}
+              <TabsContent value="gel" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-2xl">Gel Application</CardTitle>
+                    <CardDescription>
+                      Proper gel application is essential for good signal quality and low impedances
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="relative aspect-square rounded-xl overflow-hidden border border-border">
+                        <Image
+                          src="/images/eeg-gel-syringe.jpg"
+                          alt="Blunt-tip syringe filled with electrode gel"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <h3 className="font-serif text-xl font-semibold">About SignaGel</h3>
+                        <p className="text-muted-foreground">
+                          SignaGel is a highly conductive electrode gel specifically designed for 
+                          EEG recordings. It provides excellent conductivity while being gentle on 
+                          the scalp and easy to wash out.
+                        </p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="text-sm">High chloride content for conductivity</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="text-sm">Water-soluble and easy to clean</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="text-sm">Hypoallergenic formula</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="text-sm">Doesn&apos;t dry out during long sessions</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <StepCard
+                      step={1}
+                      title="Prepare Gel Syringes"
+                      description="Fill blunt-tip syringes with SignaGel or your preferred conductive gel. Have several syringes ready to avoid interruptions during application."
+                      tips={["Remove air bubbles from syringe", "Keep gel at room temperature", "Have 2-3 syringes prepared in advance"]}
+                      completed={completedSteps.includes("gel-1")}
+                      onToggle={() => toggleStep("gel-1")}
+                      imageUrl="/images/eeg-fill-syringe.jpg"
+                    />
+
+                    <StepCard
+                      step={2}
+                      title="Part Hair at Each Electrode Site"
+                      description="Using the syringe tip or a cotton swab, gently part the hair beneath each electrode holder to expose the scalp. Work systematically from front to back."
+                      tips={["Use a gentle swirling motion", "Don't scratch or irritate the scalp", "Ensure you can see the scalp through the electrode hole"]}
+                      completed={completedSteps.includes("gel-2")}
+                      onToggle={() => toggleStep("gel-2")}
+                    />
+
+                    <StepCard
+                      step={3}
+                      title="Apply Gel to Each Electrode"
+                      description="Insert the syringe tip into the electrode holder and inject a small amount of gel while gently swirling. The gel should make contact with both the scalp and the electrode."
+                      tips={["Don't overfill - gel bridges between electrodes cause shorts", "A small amount (pea-sized) is usually sufficient", "You should feel slight resistance as gel contacts scalp"]}
+                      completed={completedSteps.includes("gel-3")}
+                      onToggle={() => toggleStep("gel-3")}
+                      imageUrl="/images/eeg-apply-gel.jpg"
+                    />
+
+                    <StepCard
+                      step={4}
+                      title="Check Impedances"
+                      description="Using ActiView software, check impedances for all electrodes. Good impedances are typically below 20kΩ for BioSemi systems. Re-apply gel to any electrodes with high impedances."
+                      tips={["Start recording to see live impedance values", "Focus on problem electrodes first", "Document any persistently high-impedance channels"]}
+                      completed={completedSteps.includes("gel-4")}
+                      onToggle={() => toggleStep("gel-4")}
+                      imageUrl="/images/impedance-check.jpg"
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card className="border-primary/20">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Droplets className="size-5 text-primary" />
+                      Impedance Troubleshooting
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Accordion type="single" collapsible className="w-full">
+                      {troubleshooting.map((item, i) => (
+                        <AccordionItem key={i} value={`item-${i}`}>
+                          <AccordionTrigger className="text-left">
+                            {item.problem}
+                          </AccordionTrigger>
+                          <AccordionContent className="text-muted-foreground">
+                            {item.solution}
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Recording Tab */}
+              <TabsContent value="recording" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-2xl">Recording Session</CardTitle>
+                    <CardDescription>
+                      Tips for successful EEG data acquisition
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="rounded-xl border border-border overflow-hidden">
+                      <div className="bg-muted/50 p-4 border-b border-border">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="size-3 rounded-full bg-green-500 animate-pulse" />
+                            <span className="font-mono text-sm">Recording Active</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>Sample Rate: 2048 Hz</span>
+                            <span>Channels: 64</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="h-48 bg-background">
+                        <EEGWaveform 
+                          channels={8} 
+                          height={192}
+                          showLabels={true}
+                          animated={true}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <Card>
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-lg">Before Recording</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm">
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Verify all impedances are acceptable</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Check signal quality in preview mode</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Confirm trigger codes are working</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Set correct filename and save location</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Brief participant on task instructions</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-lg">During Recording</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm">
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Monitor signal quality continuously</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Note any artifacts or issues in log</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Offer breaks if session is long</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Re-gel electrodes if impedances drift</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span>Keep room quiet and minimize movement</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    <Card className="bg-muted/50">
+                      <CardHeader>
+                        <CardTitle className="text-lg">Common Artifacts to Watch For</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                          <div className="space-y-2">
+                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                              <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
+                                <path 
+                                  d="M0,20 Q10,20 20,5 T40,20 T60,5 T80,20 T100,5" 
+                                  fill="none" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2"
+                                  className="text-amber-500"
+                                />
+                              </svg>
+                            </div>
+                            <p className="text-sm font-medium">Eye Blinks</p>
+                            <p className="text-xs text-muted-foreground">Large deflections in frontal channels</p>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                              <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
+                                <path 
+                                  d="M0,20 L10,15 L20,25 L30,15 L40,25 L50,15 L60,25 L70,15 L80,25 L90,15 L100,20" 
+                                  fill="none" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2"
+                                  className="text-red-500"
+                                />
+                              </svg>
+                            </div>
+                            <p className="text-sm font-medium">Muscle (EMG)</p>
+                            <p className="text-xs text-muted-foreground">High-frequency noise from muscle tension</p>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                              <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
+                                <path 
+                                  d="M0,30 Q25,30 50,10 Q75,30 100,30" 
+                                  fill="none" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2"
+                                  className="text-blue-500"
+                                />
+                              </svg>
+                            </div>
+                            <p className="text-sm font-medium">Movement</p>
+                            <p className="text-xs text-muted-foreground">Slow drifts from head/body movement</p>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                              <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
+                                <path 
+                                  d="M0,20 L5,10 L10,30 L15,10 L20,30 L25,10 L30,30 L35,10 L40,30 L45,10 L50,30 L55,10 L60,30 L65,10 L70,30 L75,10 L80,30 L85,10 L90,30 L95,10 L100,20" 
+                                  fill="none" 
+                                  stroke="currentColor" 
+                                  strokeWidth="1.5"
+                                  className="text-purple-500"
+                                />
+                              </svg>
+                            </div>
+                            <p className="text-sm font-medium">60Hz Line Noise</p>
+                            <p className="text-xs text-muted-foreground">Regular sinusoidal interference</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Cleanup Tab */}
+              <TabsContent value="cleanup" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-2xl">Post-Session Cleanup</CardTitle>
+                    <CardDescription>
+                      Proper cleanup ensures participant comfort and equipment longevity
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <StepCard
+                      step={1}
+                      title="Remove the Cap"
+                      description="Gently unfasten the chin strap and carefully remove the cap. Lift from the back first, then roll forward off the forehead."
+                      tips={["Go slowly to avoid pulling hair", "Have participant hold their head steady", "Support the cable to prevent tangling"]}
+                      completed={completedSteps.includes("clean-1")}
+                      onToggle={() => toggleStep("clean-1")}
+                    />
+
+                    <StepCard
+                      step={2}
+                      title="Participant Cleanup"
+                      description="Provide the participant with towels and access to a sink or shower. Most gel washes out easily with warm water and regular shampoo."
+                      tips={["Offer a comb or brush", "Provide privacy if using shower", "Have extra towels available"]}
+                      completed={completedSteps.includes("clean-2")}
+                      onToggle={() => toggleStep("clean-2")}
+                      imageUrl="/images/participant-cleanup.jpg"
+                    />
+
+                    <StepCard
+                      step={3}
+                      title="Clean the Cap and Electrodes"
+                      description="Rinse the cap thoroughly with lukewarm water to remove all gel. Use a soft brush if needed. Do not use hot water or harsh chemicals."
+                      tips={["Never submerge the connector end", "Use gentle water pressure", "Check each electrode holder is clean"]}
+                      completed={completedSteps.includes("clean-3")}
+                      onToggle={() => toggleStep("clean-3")}
+                      imageUrl="/images/clean-cap.jpg"
+                    />
+
+                    <StepCard
+                      step={4}
+                      title="Disinfect Equipment"
+                      description="After rinsing, disinfect the cap according to your lab's protocol. Common methods include soaking in a dilute disinfectant solution or using disinfectant wipes."
+                      tips={["Follow manufacturer guidelines", "Ensure complete contact with disinfectant", "Allow proper contact time per protocol"]}
+                      completed={completedSteps.includes("clean-4")}
+                      onToggle={() => toggleStep("clean-4")}
+                    />
+
+                    <StepCard
+                      step={5}
+                      title="Dry and Store"
+                      description="Allow the cap to air dry completely before storage. Store in a clean, dry location away from direct sunlight. Coil cables loosely to prevent damage."
+                      tips={["Never store wet caps - promotes mold/bacteria", "Use cap stand or hook for drying", "Check electrodes for damage before storing"]}
+                      completed={completedSteps.includes("clean-5")}
+                      onToggle={() => toggleStep("clean-5")}
+                      imageUrl="/images/store-cap.jpg"
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-xl">Equipment Maintenance Schedule</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between py-3 border-b border-border">
+                        <div>
+                          <p className="font-medium">After Each Session</p>
+                          <p className="text-sm text-muted-foreground">Rinse and disinfect cap, clean syringes</p>
+                        </div>
+                        <Badge>Daily</Badge>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-border">
+                        <div>
+                          <p className="font-medium">Inspect Electrodes</p>
+                          <p className="text-sm text-muted-foreground">Check for corrosion, loose connections</p>
+                        </div>
+                        <Badge variant="secondary">Weekly</Badge>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-border">
+                        <div>
+                          <p className="font-medium">Deep Clean Cables</p>
+                          <p className="text-sm text-muted-foreground">Check for damage, test connectivity</p>
+                        </div>
+                        <Badge variant="secondary">Monthly</Badge>
+                      </div>
+                      <div className="flex items-center justify-between py-3">
+                        <div>
+                          <p className="font-medium">Full System Check</p>
+                          <p className="text-sm text-muted-foreground">Calibration, battery health, software updates</p>
+                        </div>
+                        <Badge variant="outline">Quarterly</Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between pt-6 border-t border-border">
+              <Link href="/chat">
+                <Button variant="outline" className="gap-2">
+                  <ArrowLeft className="size-4" />
+                  Back to Chat
+                </Button>
+              </Link>
+              <div className="flex gap-2">
+                {activeSection !== "overview" && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      const currentIndex = sections.findIndex(s => s.id === activeSection)
+                      if (currentIndex > 0) setActiveSection(sections[currentIndex - 1].id)
+                    }}
+                  >
+                    Previous Section
+                  </Button>
+                )}
+                {activeSection !== "cleanup" && (
+                  <Button 
+                    onClick={() => {
+                      const currentIndex = sections.findIndex(s => s.id === activeSection)
+                      if (currentIndex < sections.length - 1) setActiveSection(sections[currentIndex + 1].id)
+                    }}
+                  >
+                    Next Section
+                    <ChevronRight className="size-4 ml-1" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface StepCardProps {
+  step: number
+  title: string
+  description: string
+  tips: string[]
+  completed: boolean
+  onToggle: () => void
+  imageUrl?: string
+}
+
+function StepCard({ step, title, description, tips, completed, onToggle, imageUrl }: StepCardProps) {
+  return (
+    <div className={`relative rounded-xl border p-6 transition-colors ${
+      completed ? "border-primary/50 bg-primary/5" : "border-border"
+    }`}>
+      <div className="flex gap-6">
+        <button
+          onClick={onToggle}
+          className={`flex size-10 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-colors ${
+            completed 
+              ? "border-primary bg-primary text-primary-foreground" 
+              : "border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary"
+          }`}
+        >
+          {completed ? <CheckCircle2 className="size-5" /> : step}
+        </button>
+        <div className="flex-1 space-y-3">
+          <h3 className="font-serif text-xl font-semibold">{title}</h3>
+          <p className="text-muted-foreground">{description}</p>
+          
+          {tips.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <p className="text-sm font-medium text-primary">Tips:</p>
+              <ul className="space-y-1">
+                {tips.map((tip, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <ChevronRight className="size-4 shrink-0 mt-0.5 text-primary" />
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        
+        {imageUrl && (
+          <div className="hidden md:block w-48 h-32 rounded-lg overflow-hidden border border-border shrink-0">
+            <Image
+              src={imageUrl}
+              alt={title}
+              width={192}
+              height={128}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

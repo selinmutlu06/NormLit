@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ArrowRight, BookOpen, MessageSquare, GitCompare, Search, Brain, Activity, FileText, Database } from "lucide-react"
+import Image from "next/image"
+import { ArrowRight, BookOpen, MessageSquare, GitCompare, Search, Brain, Activity, FileText, Database, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { EEGWaveform, BrainTopoMap, InlineWaveform } from "@/components/eeg-waveform"
@@ -17,6 +18,14 @@ export default function LandingPage() {
             <span className="font-serif text-xl font-semibold">NormLit</span>
           </div>
           <div className="flex items-center gap-4">
+            <nav className="hidden md:flex items-center gap-6 text-sm">
+              <Link href="/eeg-guide" className="text-muted-foreground hover:text-foreground transition-colors">
+                EEG Guide
+              </Link>
+              <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+                Features
+              </Link>
+            </nav>
             <ThemeToggle />
             <Button asChild>
               <Link href="/chat">
@@ -210,6 +219,80 @@ export default function LandingPage() {
                   <p className="text-sm text-muted-foreground mt-1">{desc}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* EEG Guide Section */}
+        <section className="border-b border-border bg-muted/30">
+          <div className="mx-auto max-w-6xl px-6 py-20 lg:py-24">
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+              <div className="relative order-2 lg:order-1">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-border shadow-lg">
+                  <Image
+                    src="/images/research-lab.jpg"
+                    alt="Neuroscience research laboratory with EEG equipment"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="flex items-center gap-2 text-sm text-foreground">
+                      <Zap className="size-4 text-accent" />
+                      <span className="font-medium">Interactive Protocol Guide</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -top-4 -right-4 rounded-lg border border-border bg-card p-3 shadow-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                      <Activity className="size-5 text-accent" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">BioSemi</p>
+                      <p className="font-mono text-sm font-semibold">64 ch</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="order-1 lg:order-2">
+                <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm text-accent mb-4">
+                  <Zap className="size-3.5" />
+                  <span>New Feature</span>
+                </div>
+                <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                  Complete EEG Study Guide
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  A comprehensive, step-by-step protocol for conducting EEG studies with the 
+                  BioSemi ActiveTwo system. From participant preparation to cleanup.
+                </p>
+                
+                <div className="mt-6 space-y-3">
+                  {[
+                    "Cap setup and electrode placement",
+                    "Gel application and impedance checking",
+                    "Recording best practices",
+                    "Artifact troubleshooting",
+                    "Post-session cleanup protocols",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3">
+                      <div className="size-2 rounded-full bg-accent" />
+                      <span className="text-sm text-muted-foreground">{item}</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-8">
+                  <Button asChild size="lg">
+                    <Link href="/eeg-guide">
+                      View EEG Guide
+                      <ArrowRight className="ml-2 size-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
