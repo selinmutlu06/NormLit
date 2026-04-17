@@ -89,7 +89,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
+  --font-sans: 'Microsoft Sans Serif', 'Segoe UI', 'Tahoma', sans-serif;
   --font-serif: 'Source Serif 4', 'Georgia', serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-eeg-alpha: var(--eeg-alpha);
