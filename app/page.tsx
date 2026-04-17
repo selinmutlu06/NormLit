@@ -53,7 +53,7 @@ export default function LandingPage() {
                 <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
                   Research Literature
                   <br />
-                  <span className="text-accent">Intelligence</span>
+                  <span className="text-primary">Intelligence</span>
                 </h1>
                 <p className="mt-6 text-lg leading-relaxed text-muted-foreground text-pretty max-w-lg">
                   Ask questions across your paper library, compare findings between EEG studies, 
