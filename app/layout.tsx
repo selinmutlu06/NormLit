@@ -13,21 +13,19 @@ export const metadata: Metadata = {
   description: 'AI-powered research assistant for cognitive neuroscience labs. Chat with your papers, compare findings, and accelerate your research.',
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/brain-icon.png',
+    apple: '/brain-icon.png',
+  },
+  openGraph: {
+    title: 'NormLit - Research Literature Assistant',
+    description: 'AI-powered research assistant for cognitive neuroscience labs. Chat with your papers, compare findings, and accelerate your research.',
+    images: ['/brain-icon.png'],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'NormLit - Research Literature Assistant',
+    description: 'AI-powered research assistant for cognitive neuroscience labs.',
+    images: ['/brain-icon.png'],
   },
 }
 
