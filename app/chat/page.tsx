@@ -107,7 +107,7 @@ export default function ChatPage() {
           </div>
           <div className="flex items-center gap-2">
             <BookOpen className="size-5 text-foreground" />
-            <span className="font-serif text-lg font-semibold">NormLit</span>
+            <span className="font-sans text-lg font-semibold">NormLit</span>
           </div>
           <div className="flex items-center gap-2">
             <ComparePanel papers={papers} selectedPaperIds={selectedPaperIds} />
@@ -121,7 +121,7 @@ export default function ChatPage() {
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <BookOpen className="size-12 text-muted-foreground/50" />
-                <h2 className="mt-4 font-serif text-xl font-semibold text-foreground">
+                <h2 className="mt-4 font-sans text-xl font-semibold text-foreground">
                   Start a Conversation
                 </h2>
                 <p className="mt-2 max-w-md text-sm text-muted-foreground">

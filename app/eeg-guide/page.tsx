@@ -106,7 +106,7 @@ export default function EEGGuidePage() {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2">
               <BookOpen className="size-5 text-primary" />
-              <span className="font-serif text-lg font-semibold">NormLit</span>
+              <span className="font-sans text-lg font-semibold">NormLit</span>
             </Link>
             <span className="text-muted-foreground">/</span>
             <span className="text-sm font-medium">EEG Study Guide</span>
@@ -182,7 +182,7 @@ export default function EEGGuidePage() {
                     <Badge variant="secondary" className="font-mono text-xs">
                       BioSemi ActiveTwo Protocol
                     </Badge>
-                    <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">
+                    <h1 className="font-sans text-3xl md:text-4xl font-bold tracking-tight">
                       Complete EEG Study Guide
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl">
@@ -246,7 +246,7 @@ export default function EEGGuidePage() {
               <TabsContent value="overview" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-2xl">Equipment Checklist</CardTitle>
+                    <CardTitle className="font-sans text-2xl">Equipment Checklist</CardTitle>
                     <CardDescription>
                       Gather all materials before beginning the study session
                     </CardDescription>
@@ -275,7 +275,7 @@ export default function EEGGuidePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-2xl">Cap Size Guide</CardTitle>
+                    <CardTitle className="font-sans text-2xl">Cap Size Guide</CardTitle>
                     <CardDescription>
                       Measure head circumference at the widest point (above eyebrows, around occipital protuberance)
                     </CardDescription>
@@ -349,7 +349,7 @@ export default function EEGGuidePage() {
               <TabsContent value="preparation" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-2xl">Participant Preparation</CardTitle>
+                    <CardTitle className="font-sans text-2xl">Participant Preparation</CardTitle>
                     <CardDescription>
                       Steps to prepare the participant for EEG recording
                     </CardDescription>
@@ -402,7 +402,7 @@ export default function EEGGuidePage() {
               <TabsContent value="setup" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-2xl">EEG Cap Setup</CardTitle>
+                    <CardTitle className="font-sans text-2xl">EEG Cap Setup</CardTitle>
                     <CardDescription>
                       Proper cap placement is critical for accurate recordings
                     </CardDescription>
@@ -464,7 +464,7 @@ export default function EEGGuidePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-xl">Interactive Electrode Map</CardTitle>
+                    <CardTitle className="font-sans text-xl">Interactive Electrode Map</CardTitle>
                     <CardDescription>
                       Click on any electrode to see detailed information about its position and brain region
                     </CardDescription>
@@ -476,7 +476,7 @@ export default function EEGGuidePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-xl">Brain Regions Overview</CardTitle>
+                    <CardTitle className="font-sans text-xl">Brain Regions Overview</CardTitle>
                     <CardDescription>
                       Understanding which brain areas each electrode group covers
                     </CardDescription>
@@ -585,7 +585,7 @@ export default function EEGGuidePage() {
               <TabsContent value="gel" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-2xl">Gel Application</CardTitle>
+                    <CardTitle className="font-sans text-2xl">Gel Application</CardTitle>
                     <CardDescription>
                       Proper gel application is essential for good signal quality and low impedances
                     </CardDescription>
@@ -601,7 +601,7 @@ export default function EEGGuidePage() {
                         />
                       </div>
                       <div className="space-y-4">
-                        <h3 className="font-serif text-xl font-semibold">About SignaGel</h3>
+                        <h3 className="font-sans text-xl font-semibold">About SignaGel</h3>
                         <p className="text-muted-foreground">
                           SignaGel is a highly conductive electrode gel specifically designed for 
                           EEG recordings. It provides excellent conductivity while being gentle on 
@@ -697,7 +697,7 @@ export default function EEGGuidePage() {
               <TabsContent value="recording" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-2xl">Recording Session</CardTitle>
+                    <CardTitle className="font-sans text-2xl">Recording Session</CardTitle>
                     <CardDescription>
                       Tips for successful EEG data acquisition
                     </CardDescription>
@@ -861,7 +861,7 @@ export default function EEGGuidePage() {
               <TabsContent value="cleanup" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-2xl">Post-Session Cleanup</CardTitle>
+                    <CardTitle className="font-sans text-2xl">Post-Session Cleanup</CardTitle>
                     <CardDescription>
                       Proper cleanup ensures participant comfort and equipment longevity
                     </CardDescription>
@@ -919,7 +919,7 @@ export default function EEGGuidePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-xl">Equipment Maintenance Schedule</CardTitle>
+                    <CardTitle className="font-sans text-xl">Equipment Maintenance Schedule</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -1024,7 +1024,7 @@ function StepCard({ step, title, description, tips, completed, onToggle, imageUr
           {completed ? <CheckCircle2 className="size-5" /> : step}
         </button>
         <div className="flex-1 space-y-3">
-          <h3 className="font-serif text-xl font-semibold">{title}</h3>
+          <h3 className="font-sans text-xl font-semibold">{title}</h3>
           <p className="text-muted-foreground">{description}</p>
           
           {tips.length > 0 && (

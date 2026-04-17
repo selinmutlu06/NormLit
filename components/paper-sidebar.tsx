@@ -63,7 +63,7 @@ export function PaperSidebar({
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border p-4">
-          <h2 className="font-serif text-lg font-semibold">Papers</h2>
+          <h2 className="font-sans text-lg font-semibold">Papers</h2>
           <Button
             variant="ghost"
             size="icon"

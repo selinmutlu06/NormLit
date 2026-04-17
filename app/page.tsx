@@ -15,7 +15,7 @@ export default function LandingPage() {
             <div className="flex items-center justify-center size-8 rounded bg-primary">
               <Brain className="size-5 text-primary-foreground" />
             </div>
-            <span className="font-serif text-xl font-semibold">NormLit</span>
+            <span className="font-sans text-xl font-semibold">NormLit</span>
           </div>
           <div className="flex items-center gap-4">
             <nav className="hidden md:flex items-center gap-6 text-sm">
@@ -50,7 +50,7 @@ export default function LandingPage() {
                   <Activity className="size-3.5" />
                   <span>Built for Cognitive Neuroscience</span>
                 </div>
-                <h1 className="font-serif text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
+                <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl text-balance">
                   Research Literature
                   <br />
                   <span className="text-accent">Intelligence</span>
@@ -84,7 +84,7 @@ export default function LandingPage() {
                     <FileText className="size-4 text-chart-1" />
                     <span className="font-mono text-xs text-muted-foreground">Papers</span>
                   </div>
-                  <p className="font-serif text-2xl font-bold text-foreground">247</p>
+                  <p className="font-sans text-2xl font-bold text-foreground">247</p>
                 </div>
                 
                 <div className="absolute -right-2 bottom-1/4 rounded-lg border border-border bg-card p-3 shadow-lg">
@@ -92,7 +92,7 @@ export default function LandingPage() {
                     <Database className="size-4 text-chart-2" />
                     <span className="font-mono text-xs text-muted-foreground">Embeddings</span>
                   </div>
-                  <p className="font-serif text-2xl font-bold text-foreground">12.4k</p>
+                  <p className="font-sans text-2xl font-bold text-foreground">12.4k</p>
                 </div>
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-6xl px-6 py-20 lg:py-24">
             <div className="text-center mb-16">
               <p className="font-mono text-sm text-accent uppercase tracking-wider mb-2">Features</p>
-              <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              <h2 className="font-sans text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                 Accelerate Your Research
               </h2>
               <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
@@ -142,7 +142,7 @@ export default function LandingPage() {
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
               <div>
                 <p className="font-mono text-sm text-accent uppercase tracking-wider mb-2">How It Works</p>
-                <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                <h2 className="font-sans text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                   Retrieval-Augmented Generation
                 </h2>
                 <p className="mt-4 text-muted-foreground">
@@ -201,7 +201,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-6xl px-6 py-20 lg:py-24">
             <div className="text-center mb-12">
               <p className="font-mono text-sm text-accent uppercase tracking-wider mb-2">Supported Research</p>
-              <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              <h2 className="font-sans text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                 All Your Neuroscience Literature
               </h2>
             </div>
@@ -215,7 +215,7 @@ export default function LandingPage() {
               ].map(({ title, icon: Icon, desc }) => (
                 <div key={title} className="rounded-lg border border-border bg-card p-4 hover:border-accent/50 transition-colors">
                   <Icon className="size-5 text-accent mb-3" />
-                  <h3 className="font-serif font-semibold text-foreground">{title}</h3>
+                  <h3 className="font-sans font-semibold text-foreground">{title}</h3>
                   <p className="text-sm text-muted-foreground mt-1">{desc}</p>
                 </div>
               ))}
@@ -261,7 +261,7 @@ export default function LandingPage() {
                   <Zap className="size-3.5" />
                   <span>New Feature</span>
                 </div>
-                <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                <h2 className="font-sans text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                   Complete EEG Study Guide
                 </h2>
                 <p className="mt-4 text-muted-foreground">
@@ -302,7 +302,7 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-grid opacity-30" />
           <div className="relative mx-auto max-w-6xl px-6 py-20 lg:py-24">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-balance">
+              <h2 className="font-sans text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-balance">
                 Ready to Explore Your Literature?
               </h2>
               <p className="mt-4 text-muted-foreground">
@@ -330,7 +330,7 @@ export default function LandingPage() {
               <div className="flex items-center justify-center size-6 rounded bg-primary">
                 <Brain className="size-4 text-primary-foreground" />
               </div>
-              <span className="font-serif text-sm text-muted-foreground">NormLit</span>
+              <span className="font-sans text-sm text-muted-foreground">NormLit</span>
             </div>
             <p className="font-mono text-xs text-muted-foreground">
               Built for cognitive neuroscience research
@@ -358,7 +358,7 @@ function FeatureCard({
       <div className="flex size-10 items-center justify-center rounded bg-accent/10 text-accent">
         {icon}
       </div>
-      <h3 className="mt-4 font-serif text-lg font-semibold text-foreground">{title}</h3>
+      <h3 className="mt-4 font-sans text-lg font-semibold text-foreground">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
       {visual}
     </div>
@@ -380,7 +380,7 @@ function StepItem({
         {number}
       </div>
       <div>
-        <h3 className="font-serif font-semibold text-foreground">{title}</h3>
+        <h3 className="font-sans font-semibold text-foreground">{title}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
     </div>

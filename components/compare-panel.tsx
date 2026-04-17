@@ -125,7 +125,7 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="font-serif">Compare Papers</DialogTitle>
+          <DialogTitle className="font-sans">Compare Papers</DialogTitle>
           <DialogDescription>
             Select a comparison type to analyze the selected papers.
           </DialogDescription>
