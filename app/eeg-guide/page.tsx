@@ -28,6 +28,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Progress } from "@/components/ui/progress"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { EEGWaveform } from "@/components/eeg-waveform"
+import { ElectrodeMap } from "@/components/electrode-map"
 
 const sections = [
   { id: "overview", title: "Overview", icon: Info },
@@ -463,40 +464,116 @@ export default function EEGGuidePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-serif text-xl">Electrode Layout Reference</CardTitle>
+                    <CardTitle className="font-serif text-xl">Interactive Electrode Map</CardTitle>
+                    <CardDescription>
+                      Click on any electrode to see detailed information about its position and brain region
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-3">
-                        <h4 className="font-medium">Frontal Electrodes</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {["Fp1", "Fp2", "F3", "F4", "F7", "F8", "Fz", "FC1", "FC2", "FC5", "FC6"].map(e => (
-                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
-                          ))}
+                    <ElectrodeMap size="lg" showLabels={true} />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif text-xl">Brain Regions Overview</CardTitle>
+                    <CardDescription>
+                      Understanding which brain areas each electrode group covers
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-lg border border-blue-500/30 bg-blue-500/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="size-3 rounded-full bg-blue-500" />
+                            <h4 className="font-medium">Frontal Lobe</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Executive function, decision making, planning, and motor control.
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["Fp1", "Fp2", "Fpz", "AF3", "AF4", "AF7", "AF8", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "Fz", "FC1", "FC2", "FC3", "FC4", "FC5", "FC6", "FCz"].map(e => (
+                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="size-3 rounded-full bg-green-500" />
+                            <h4 className="font-medium">Central (Motor Cortex)</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Primary motor cortex and somatosensory processing.
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["C1", "C2", "C3", "C4", "C5", "C6", "Cz"].map(e => (
+                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="p-4 rounded-lg border border-purple-500/30 bg-purple-500/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="size-3 rounded-full bg-purple-500" />
+                            <h4 className="font-medium">Temporal Lobe</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Auditory processing, memory, language comprehension.
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["T7", "T8", "FT7", "FT8", "TP7", "TP8"].map(e => (
+                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                      <div className="space-y-3">
-                        <h4 className="font-medium">Central Electrodes</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {["C3", "C4", "Cz", "CP1", "CP2", "CP5", "CP6"].map(e => (
-                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
-                          ))}
+
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="size-3 rounded-full bg-amber-500" />
+                            <h4 className="font-medium">Parietal Lobe</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Spatial processing, attention, sensory integration.
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "Pz", "CP1", "CP2", "CP3", "CP4", "CP5", "CP6", "CPz"].map(e => (
+                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-3">
-                        <h4 className="font-medium">Parietal Electrodes</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {["P3", "P4", "P7", "P8", "Pz", "PO3", "PO4"].map(e => (
-                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
-                          ))}
+
+                        <div className="p-4 rounded-lg border border-rose-500/30 bg-rose-500/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="size-3 rounded-full bg-rose-500" />
+                            <h4 className="font-medium">Occipital Lobe</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Visual processing and visual perception.
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["O1", "O2", "Oz", "PO3", "PO4", "PO7", "PO8", "POz", "Iz"].map(e => (
+                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-3">
-                        <h4 className="font-medium">Occipital/Temporal</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {["O1", "O2", "Oz", "T7", "T8", "TP7", "TP8"].map(e => (
-                            <Badge key={e} variant="secondary" className="font-mono">{e}</Badge>
-                          ))}
+
+                        <div className="p-4 rounded-lg border border-gray-500/30 bg-gray-500/5">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="size-3 rounded-full bg-gray-500" />
+                            <h4 className="font-medium">Reference Electrodes</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Mastoid or earlobe references for differential recording.
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["A1", "A2"].map(e => (
+                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
