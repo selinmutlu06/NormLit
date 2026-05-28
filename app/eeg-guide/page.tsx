@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ContentImage } from "@/components/content-image"
-import type { MediaKey } from "@/lib/media"
+import { GuideReferencePanel } from "@/components/guide-reference-panel"
 import { 
   BookOpen, 
   ChevronRight, 
@@ -22,6 +21,19 @@ import {
   Pause,
   ClipboardCheck,
   Ruler,
+  MapPin,
+  Sparkles,
+  Plug,
+  Lock,
+  Target,
+  Box,
+  Rows3,
+  Syringe,
+  Gauge,
+  Undo2,
+  ShowerHead,
+  Shield,
+  Archive,
   type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -359,6 +371,12 @@ export default function EEGGuidePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
+                    <GuideReferencePanel
+                      title="Reference: 10-20 electrode positions"
+                      description="Landmarks (nasion, inion, preauricular points) align the cap to this standard layout."
+                      mediaKey="eeg1020"
+                    />
+
                     <StepCard
                       step={1}
                       title="Informed Consent"
@@ -386,7 +404,7 @@ export default function EEGGuidePage() {
                       tips={["Use a skin-safe marker if needed", "These landmarks ensure consistent placement", "Cz should be exactly between nasion-inion and preauricular points"]}
                       completed={completedSteps.includes("prep-3")}
                       onToggle={() => toggleStep("prep-3")}
-                      mediaKey="eeg1020"
+                      icon={MapPin}
                     />
 
                     <StepCard
@@ -396,7 +414,7 @@ export default function EEGGuidePage() {
                       tips={["Be gentle - avoid irritating the skin", "Let alcohol dry completely before gel application", "For external electrodes, clean mastoid areas"]}
                       completed={completedSteps.includes("prep-4")}
                       onToggle={() => toggleStep("prep-4")}
-                      mediaKey="eegRecordingCap"
+                      icon={Sparkles}
                     />
                   </CardContent>
                 </Card>
@@ -419,6 +437,12 @@ export default function EEGGuidePage() {
                       <ElectrodeMap variant="guide" />
                     </div>
 
+                    <GuideReferencePanel
+                      title="Reference: EEG recording cap"
+                      description="Electrodes sit in holders on the cap; hair is parted and gel applied at each site."
+                      mediaKey="eegRecordingCap"
+                    />
+
                     <StepCard
                       step={1}
                       title="Select Correct Cap Size"
@@ -426,6 +450,7 @@ export default function EEGGuidePage() {
                       tips={["If between sizes, try smaller first", "Cap should not slide when participant moves head", "Ensure all electrode holes align with scalp"]}
                       completed={completedSteps.includes("setup-1")}
                       onToggle={() => toggleStep("setup-1")}
+                      icon={Box}
                     />
 
                     <StepCard
@@ -435,6 +460,7 @@ export default function EEGGuidePage() {
                       tips={["Have participant hold front of cap while you adjust back", "Check symmetry by comparing left and right electrode positions", "Cz should be at the very top of the head"]}
                       completed={completedSteps.includes("setup-2")}
                       onToggle={() => toggleStep("setup-2")}
+                      icon={Target}
                     />
 
                     <StepCard
@@ -444,6 +470,13 @@ export default function EEGGuidePage() {
                       tips={["Chin strap should be snug but comfortable", "Check that no electrodes are lifted off the scalp", "Ask participant if they feel any pressure points"]}
                       completed={completedSteps.includes("setup-3")}
                       onToggle={() => toggleStep("setup-3")}
+                      icon={Lock}
+                    />
+
+                    <GuideReferencePanel
+                      title="Reference: EEG amplifier setup"
+                      description="Verify cable connections and system status before starting impedance checks."
+                      mediaKey="eegClinicalSetup"
                     />
 
                     <StepCard
@@ -453,7 +486,7 @@ export default function EEGGuidePage() {
                       tips={["Check that status LED indicates proper connection", "Route cables to minimize movement artifacts", "Ensure battery is fully charged before session"]}
                       completed={completedSteps.includes("setup-4")}
                       onToggle={() => toggleStep("setup-4")}
-                      mediaKey="eegClinicalSetup"
+                      icon={Plug}
                     />
                   </CardContent>
                 </Card>
@@ -576,9 +609,11 @@ export default function EEGGuidePage() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">
-                      <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-muted/30">
-                        <ContentImage mediaKey="eegRecordingCap" fill objectFit="contain" className="absolute inset-0" />
-                      </div>
+                      <GuideReferencePanel
+                        title="Reference: electrode cap on scalp"
+                        mediaKey="eegRecordingCap"
+                        className="h-full"
+                      />
                       <div className="space-y-4">
                         <h3 className="font-sans text-xl font-semibold">About SignaGel</h3>
                         <p className="text-muted-foreground">
@@ -624,6 +659,7 @@ export default function EEGGuidePage() {
                       tips={["Use a gentle swirling motion", "Don't scratch or irritate the scalp", "Ensure you can see the scalp through the electrode hole"]}
                       completed={completedSteps.includes("gel-2")}
                       onToggle={() => toggleStep("gel-2")}
+                      icon={Rows3}
                     />
 
                     <StepCard
@@ -633,7 +669,7 @@ export default function EEGGuidePage() {
                       tips={["Don't overfill - gel bridges between electrodes cause shorts", "A small amount (pea-sized) is usually sufficient", "You should feel slight resistance as gel contacts scalp"]}
                       completed={completedSteps.includes("gel-3")}
                       onToggle={() => toggleStep("gel-3")}
-                      mediaKey="eegRecordingCap"
+                      icon={Syringe}
                     />
 
                     <StepCard
@@ -643,7 +679,7 @@ export default function EEGGuidePage() {
                       tips={["Start recording to see live impedance values", "Focus on problem electrodes first", "Document any persistently high-impedance channels"]}
                       completed={completedSteps.includes("gel-4")}
                       onToggle={() => toggleStep("gel-4")}
-                      mediaKey="eegClinicalSetup"
+                      icon={Gauge}
                     />
                   </CardContent>
                 </Card>
@@ -853,6 +889,7 @@ export default function EEGGuidePage() {
                       tips={["Go slowly to avoid pulling hair", "Have participant hold their head steady", "Support the cable to prevent tangling"]}
                       completed={completedSteps.includes("clean-1")}
                       onToggle={() => toggleStep("clean-1")}
+                      icon={Undo2}
                     />
 
                     <StepCard
@@ -862,6 +899,7 @@ export default function EEGGuidePage() {
                       tips={["Offer a comb or brush", "Provide privacy if using shower", "Have extra towels available"]}
                       completed={completedSteps.includes("clean-2")}
                       onToggle={() => toggleStep("clean-2")}
+                      icon={ShowerHead}
                     />
 
                     <StepCard
@@ -871,6 +909,7 @@ export default function EEGGuidePage() {
                       tips={["Never submerge the connector end", "Use gentle water pressure", "Check each electrode holder is clean"]}
                       completed={completedSteps.includes("clean-3")}
                       onToggle={() => toggleStep("clean-3")}
+                      icon={Sparkles}
                     />
 
                     <StepCard
@@ -880,6 +919,7 @@ export default function EEGGuidePage() {
                       tips={["Follow manufacturer guidelines", "Ensure complete contact with disinfectant", "Allow proper contact time per protocol"]}
                       completed={completedSteps.includes("clean-4")}
                       onToggle={() => toggleStep("clean-4")}
+                      icon={Shield}
                     />
 
                     <StepCard
@@ -889,6 +929,7 @@ export default function EEGGuidePage() {
                       tips={["Never store wet caps - promotes mold/bacteria", "Use cap stand or hook for drying", "Check electrodes for damage before storing"]}
                       completed={completedSteps.includes("clean-5")}
                       onToggle={() => toggleStep("clean-5")}
+                      icon={Archive}
                     />
                   </CardContent>
                 </Card>
@@ -980,11 +1021,10 @@ interface StepCardProps {
   tips: string[]
   completed: boolean
   onToggle: () => void
-  mediaKey?: MediaKey
-  icon?: LucideIcon
+  icon: LucideIcon
 }
 
-function StepCard({ step, title, description, tips, completed, onToggle, mediaKey, icon: Icon }: StepCardProps) {
+function StepCard({ step, title, description, tips, completed, onToggle, icon: Icon }: StepCardProps) {
   return (
     <div className={`relative rounded-xl border p-6 transition-colors ${
       completed ? "border-primary/50 bg-primary/5" : "border-border"
@@ -1019,21 +1059,12 @@ function StepCard({ step, title, description, tips, completed, onToggle, mediaKe
           )}
         </div>
         
-        {mediaKey && (
-          <div className="hidden md:block w-44 shrink-0 overflow-hidden rounded-lg border border-border bg-muted/30">
-            <ContentImage
-              mediaKey={mediaKey}
-              width={176}
-              height={132}
-              className="[&_img]:h-32 [&_img]:w-full [&_img]:object-contain"
-            />
-          </div>
-        )}
-        {!mediaKey && Icon && (
-          <div className="hidden md:flex size-20 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary">
-            <Icon className="size-9" strokeWidth={1.5} />
-          </div>
-        )}
+        <div
+          className="flex size-14 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary sm:size-[4.5rem]"
+          aria-hidden
+        >
+          <Icon className="size-7 sm:size-8" strokeWidth={1.5} />
+        </div>
       </div>
     </div>
   )
