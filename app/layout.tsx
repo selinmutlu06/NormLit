@@ -12,20 +12,16 @@ export const metadata: Metadata = {
   title: 'NormLit - Research Literature Assistant',
   description: 'AI-powered research assistant for cognitive neuroscience labs. Chat with your papers, compare findings, and accelerate your research.',
   generator: 'v0.app',
-  icons: {
-    icon: '/brain-icon.png',
-    apple: '/brain-icon.png',
-  },
   openGraph: {
     title: 'NormLit - Research Literature Assistant',
     description: 'AI-powered research assistant for cognitive neuroscience labs. Chat with your papers, compare findings, and accelerate your research.',
-    images: ['/brain-icon.png'],
+    images: ['/brain-icon.svg'],
   },
   twitter: {
     card: 'summary',
     title: 'NormLit - Research Literature Assistant',
     description: 'AI-powered research assistant for cognitive neuroscience labs.',
-    images: ['/brain-icon.png'],
+    images: ['/brain-icon.svg'],
   },
 }
 
