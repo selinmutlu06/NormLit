@@ -38,12 +38,21 @@ async function applySchemaWithPg(): Promise<void> {
     throw new Error('Database connection not configured for setup.')
   }
 
+  // Supabase pooler uses certificates that fail strict Node TLS verification.
+  const previousTls = process.env.NODE_TLS_REJECT_UNAUTHORIZED
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
   const client = new pg.Client(config)
-  await client.connect()
   try {
+    await client.connect()
     await client.query(sql)
   } finally {
     await client.end()
+    if (previousTls === undefined) {
+      delete process.env.NODE_TLS_REJECT_UNAUTHORIZED
+    } else {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousTls
+    }
   }
 }
 
