@@ -26,10 +26,15 @@ export async function GET() {
 
     if (error) {
       console.error('Error fetching papers:', error)
+      const missingTable =
+        error.code === 'PGRST205' ||
+        error.message.includes('papers') ||
+        error.message.includes('schema cache')
       return NextResponse.json(
         {
-          error:
-            'Failed to fetch papers. Ensure the database schema is applied (see scripts/001_create_schema.sql).',
+          error: missingTable
+            ? 'Database tables not found. Run the setup SQL in Supabase (see banner for copy button) or run: npm run db:setup'
+            : 'Failed to fetch papers.',
           details: error.message,
         },
         { status: 500 },

@@ -13,6 +13,7 @@ import { PaperSidebar } from "@/components/paper-sidebar"
 import { ComparePanel } from "@/components/compare-panel"
 import { usePapers } from "@/hooks/use-papers"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { DatabaseSetupAlert } from "@/components/database-setup-alert"
 
 const SUGGESTIONS = [
   "What are the main findings across these papers?",
@@ -152,13 +153,17 @@ export default function ChatPage() {
 
         {(configError || chatError) && (
           <div className="shrink-0 border-b border-border px-4 py-3">
-            <Alert variant="destructive">
-              <AlertCircle className="size-4" />
-              <AlertTitle>Something went wrong</AlertTitle>
-              <AlertDescription>
-                {chatError?.message ?? configError}
-              </AlertDescription>
-            </Alert>
+            {configError?.includes("schema") || configError?.includes("papers") ? (
+              <DatabaseSetupAlert message={configError} />
+            ) : (
+              <Alert variant="destructive">
+                <AlertCircle className="size-4" />
+                <AlertTitle>Something went wrong</AlertTitle>
+                <AlertDescription>
+                  {chatError?.message ?? configError}
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         )}
 

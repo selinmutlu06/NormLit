@@ -64,8 +64,15 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
         if (anySuccess) {
           onUploaded?.()
         }
-      } catch {
-        setResults([{ filename: "upload", error: "Network error during upload." }])
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Network error during upload."
+        setResults([
+          {
+            filename: "upload",
+            error: `${message} If this persists, check database setup in the banner above.`,
+          },
+        ])
       } finally {
         setIsUploading(false)
       }

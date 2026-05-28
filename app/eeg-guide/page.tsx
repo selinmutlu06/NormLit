@@ -3,6 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { ContentImage } from "@/components/content-image"
+import { media } from "@/lib/media"
 import { 
   BookOpen, 
   ChevronRight, 
@@ -362,7 +364,8 @@ export default function EEGGuidePage() {
                       tips={["Use clear, non-technical language", "Allow time for questions", "Provide a copy of signed consent"]}
                       completed={completedSteps.includes("prep-1")}
                       onToggle={() => toggleStep("prep-1")}
-                      imageUrl="/images/eeg-consent.jpg"
+                      imageUrl={media.researchLab.src}
+                      imageAlt={media.researchLab.alt}
                     />
                     
                     <StepCard
@@ -372,7 +375,8 @@ export default function EEGGuidePage() {
                       tips={["Measure twice for accuracy", "Round up if between sizes", "Record measurement in participant file"]}
                       completed={completedSteps.includes("prep-2")}
                       onToggle={() => toggleStep("prep-2")}
-                      imageUrl="/images/eeg-measure.jpg"
+                      imageUrl={media.medicalResearch.src}
+                      imageAlt={media.medicalResearch.alt}
                     />
 
                     <StepCard
@@ -382,7 +386,8 @@ export default function EEGGuidePage() {
                       tips={["Use a skin-safe marker if needed", "These landmarks ensure consistent placement", "Cz should be exactly between nasion-inion and preauricular points"]}
                       completed={completedSteps.includes("prep-3")}
                       onToggle={() => toggleStep("prep-3")}
-                      imageUrl="/images/eeg-landmarks.jpg"
+                      imageUrl={media.eeg1020.src}
+                      imageAlt={media.eeg1020.alt}
                     />
 
                     <StepCard
@@ -392,7 +397,8 @@ export default function EEGGuidePage() {
                       tips={["Be gentle - avoid irritating the skin", "Let alcohol dry completely before gel application", "For external electrodes, clean mastoid areas"]}
                       completed={completedSteps.includes("prep-4")}
                       onToggle={() => toggleStep("prep-4")}
-                      imageUrl="/images/eeg-prep-scalp.jpg"
+                      imageUrl={media.medicalResearch.src}
+                      imageAlt={media.medicalResearch.alt}
                     />
                   </CardContent>
                 </Card>
@@ -408,18 +414,27 @@ export default function EEGGuidePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="relative aspect-video rounded-xl overflow-hidden border border-border bg-muted">
-                      <Image
-                        src="/images/eeg-cap-placement.jpg"
-                        alt="EEG cap placement diagram showing electrode positions"
-                        fill
-                        className="object-cover"
+                    <div className="rounded-xl border border-border bg-card p-4">
+                      <ContentImage
+                        mediaKey="eeg1020"
+                        width={1024}
+                        height={916}
+                        className="mx-auto max-h-80 w-auto"
+                        showCredit
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <p className="text-sm font-medium">10-20 System Electrode Placement</p>
-                        <p className="text-xs text-muted-foreground">Standard international electrode positioning system</p>
-                      </div>
+                      <p className="mt-3 text-center text-sm font-medium">
+                        10-20 System Electrode Placement
+                      </p>
+                      <p className="text-center text-xs text-muted-foreground">
+                        Standard international electrode positions (MCN labels)
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-border bg-muted/30 p-4">
+                      <p className="mb-4 text-center text-sm font-medium text-muted-foreground">
+                        Interactive map — click an electrode for details
+                      </p>
+                      <ElectrodeMap size="md" />
                     </div>
 
                     <StepCard
@@ -438,7 +453,8 @@ export default function EEGGuidePage() {
                       tips={["Have participant hold front of cap while you adjust back", "Check symmetry by comparing left and right electrode positions", "Cz should be at the very top of the head"]}
                       completed={completedSteps.includes("setup-2")}
                       onToggle={() => toggleStep("setup-2")}
-                      imageUrl="/images/eeg-position-cap.jpg"
+                      imageUrl={media.eeg1020.src}
+                      imageAlt={media.eeg1020.alt}
                     />
 
                     <StepCard
@@ -457,7 +473,8 @@ export default function EEGGuidePage() {
                       tips={["Check that status LED indicates proper connection", "Route cables to minimize movement artifacts", "Ensure battery is fully charged before session"]}
                       completed={completedSteps.includes("setup-4")}
                       onToggle={() => toggleStep("setup-4")}
-                      imageUrl="/images/biosemi-connection.jpg"
+                      imageUrl={media.medicalResearch.src}
+                      imageAlt={media.medicalResearch.alt}
                     />
                   </CardContent>
                 </Card>
@@ -592,13 +609,8 @@ export default function EEGGuidePage() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">
-                      <div className="relative aspect-square rounded-xl overflow-hidden border border-border">
-                        <Image
-                          src="/images/eeg-gel-syringe.jpg"
-                          alt="Blunt-tip syringe filled with electrode gel"
-                          fill
-                          className="object-cover"
-                        />
+                      <div className="relative aspect-square overflow-hidden rounded-xl border border-border">
+                        <ContentImage mediaKey="medicalResearch" fill className="absolute inset-0" />
                       </div>
                       <div className="space-y-4">
                         <h3 className="font-sans text-xl font-semibold">About SignaGel</h3>
@@ -635,7 +647,8 @@ export default function EEGGuidePage() {
                       tips={["Remove air bubbles from syringe", "Keep gel at room temperature", "Have 2-3 syringes prepared in advance"]}
                       completed={completedSteps.includes("gel-1")}
                       onToggle={() => toggleStep("gel-1")}
-                      imageUrl="/images/eeg-fill-syringe.jpg"
+                      imageUrl={media.medicalResearch.src}
+                      imageAlt={media.medicalResearch.alt}
                     />
 
                     <StepCard
@@ -654,7 +667,8 @@ export default function EEGGuidePage() {
                       tips={["Don't overfill - gel bridges between electrodes cause shorts", "A small amount (pea-sized) is usually sufficient", "You should feel slight resistance as gel contacts scalp"]}
                       completed={completedSteps.includes("gel-3")}
                       onToggle={() => toggleStep("gel-3")}
-                      imageUrl="/images/eeg-apply-gel.jpg"
+                      imageUrl={media.medicalResearch.src}
+                      imageAlt={media.medicalResearch.alt}
                     />
 
                     <StepCard
@@ -664,7 +678,8 @@ export default function EEGGuidePage() {
                       tips={["Start recording to see live impedance values", "Focus on problem electrodes first", "Document any persistently high-impedance channels"]}
                       completed={completedSteps.includes("gel-4")}
                       onToggle={() => toggleStep("gel-4")}
-                      imageUrl="/images/impedance-check.jpg"
+                      imageUrl={media.medicalResearch.src}
+                      imageAlt={media.medicalResearch.alt}
                     />
                   </CardContent>
                 </Card>
@@ -883,7 +898,8 @@ export default function EEGGuidePage() {
                       tips={["Offer a comb or brush", "Provide privacy if using shower", "Have extra towels available"]}
                       completed={completedSteps.includes("clean-2")}
                       onToggle={() => toggleStep("clean-2")}
-                      imageUrl="/images/participant-cleanup.jpg"
+                      imageUrl={media.researchLab.src}
+                      imageAlt={media.researchLab.alt}
                     />
 
                     <StepCard
@@ -893,7 +909,6 @@ export default function EEGGuidePage() {
                       tips={["Never submerge the connector end", "Use gentle water pressure", "Check each electrode holder is clean"]}
                       completed={completedSteps.includes("clean-3")}
                       onToggle={() => toggleStep("clean-3")}
-                      imageUrl="/images/clean-cap.jpg"
                     />
 
                     <StepCard
@@ -912,7 +927,6 @@ export default function EEGGuidePage() {
                       tips={["Never store wet caps - promotes mold/bacteria", "Use cap stand or hook for drying", "Check electrodes for damage before storing"]}
                       completed={completedSteps.includes("clean-5")}
                       onToggle={() => toggleStep("clean-5")}
-                      imageUrl="/images/store-cap.jpg"
                     />
                   </CardContent>
                 </Card>
@@ -1005,9 +1019,10 @@ interface StepCardProps {
   completed: boolean
   onToggle: () => void
   imageUrl?: string
+  imageAlt?: string
 }
 
-function StepCard({ step, title, description, tips, completed, onToggle, imageUrl }: StepCardProps) {
+function StepCard({ step, title, description, tips, completed, onToggle, imageUrl, imageAlt }: StepCardProps) {
   return (
     <div className={`relative rounded-xl border p-6 transition-colors ${
       completed ? "border-primary/50 bg-primary/5" : "border-border"
@@ -1046,10 +1061,10 @@ function StepCard({ step, title, description, tips, completed, onToggle, imageUr
           <div className="hidden md:block w-48 h-32 rounded-lg overflow-hidden border border-border shrink-0">
             <Image
               src={imageUrl}
-              alt={title}
+              alt={imageAlt ?? title}
               width={192}
               height={128}
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
           </div>
         )}

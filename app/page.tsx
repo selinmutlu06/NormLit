@@ -1,5 +1,5 @@
 import Link from "next/link"
-import Image from "next/image"
+import { ContentImage } from "@/components/content-image"
 import { ArrowRight, BookOpen, MessageSquare, GitCompare, Search, Brain, Activity, FileText, Database, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -74,25 +74,28 @@ export default function LandingPage() {
                 </div>
               </div>
               
-              {/* Hero visual - EEG + Stats */}
-              <div className="relative lg:pl-8">
+              {/* Hero visual */}
+              <div className="space-y-4 lg:pl-4">
                 <EEGWaveform channels={4} animated className="shadow-lg" />
-                
-                {/* Floating stat cards */}
-                <div className="absolute -left-4 top-1/4 rounded-lg border border-border bg-card p-3 shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <FileText className="size-4 text-chart-1" />
-                    <span className="font-mono text-xs text-muted-foreground">Papers</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-border bg-card p-3 shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <FileText className="size-4 text-chart-1" />
+                      <span className="font-mono text-xs text-muted-foreground">Your library</span>
+                    </div>
+                    <p className="mt-1 font-sans text-sm text-muted-foreground">
+                      Upload PDFs to build your corpus
+                    </p>
                   </div>
-                  <p className="font-sans text-2xl font-bold text-foreground">247</p>
-                </div>
-                
-                <div className="absolute -right-2 bottom-1/4 rounded-lg border border-border bg-card p-3 shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <Database className="size-4 text-chart-2" />
-                    <span className="font-mono text-xs text-muted-foreground">Embeddings</span>
+                  <div className="rounded-lg border border-border bg-card p-3 shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <Database className="size-4 text-chart-2" />
+                      <span className="font-mono text-xs text-muted-foreground">Semantic search</span>
+                    </div>
+                    <p className="mt-1 font-sans text-sm text-muted-foreground">
+                      Cited answers from your papers
+                    </p>
                   </div>
-                  <p className="font-sans text-2xl font-bold text-foreground">12.4k</p>
                 </div>
               </div>
             </div>
@@ -227,15 +230,10 @@ export default function LandingPage() {
         <section className="border-b border-border bg-muted/30">
           <div className="mx-auto max-w-6xl px-6 py-20 lg:py-24">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-              <div className="relative order-2 lg:order-1">
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-border shadow-lg">
-                  <Image
-                    src="/images/research-lab.jpg"
-                    alt="Neuroscience research laboratory with EEG equipment"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+              <div className="order-2 space-y-4 lg:order-1">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border shadow-lg">
+                  <ContentImage mediaKey="researchLab" fill className="absolute inset-0" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
                     <div className="flex items-center gap-2 text-sm text-foreground">
                       <Zap className="size-4 text-accent" />
@@ -243,15 +241,13 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <div className="absolute -top-4 -right-4 rounded-lg border border-border bg-card p-3 shadow-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="size-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                      <Activity className="size-5 text-accent" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">BioSemi</p>
-                      <p className="font-mono text-sm font-semibold">64 ch</p>
-                    </div>
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-accent/10">
+                    <Activity className="size-5 text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">10-20 electrode system</p>
+                    <p className="font-mono text-sm font-semibold">Standard EEG montage</p>
                   </div>
                 </div>
               </div>
