@@ -42,10 +42,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
       >
         <div
           className={cn(
-            "inline-block rounded-lg px-4 py-3",
+            "inline-block max-w-full rounded-2xl px-4 py-3 shadow-sm",
             isUser
               ? "bg-primary text-primary-foreground"
-              : "bg-muted text-foreground"
+              : "border border-border bg-card text-foreground"
           )}
         >
           <div className="prose prose-sm dark:prose-invert max-w-none">

@@ -52,7 +52,8 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to compare papers")
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.error ?? "Failed to compare papers")
       }
 
       const reader = response.body?.getReader()
@@ -73,17 +74,22 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
 
         for (const line of lines) {
           const trimmed = line.trim()
-          if (trimmed.startsWith("data:")) {
-            const data = trimmed.slice(5).trim()
-            if (data === "[DONE]") continue
-            try {
-              const parsed = JSON.parse(data)
-              if (parsed.type === "text-delta" && parsed.delta) {
-                fullContent += parsed.delta
-                setResult(fullContent)
-              }
-            } catch {
-              // Skip invalid JSON
+          if (!trimmed.startsWith("data:")) continue
+
+          const data = trimmed.slice(5).trim()
+          if (data === "[DONE]") continue
+
+          try {
+            const parsed = JSON.parse(data)
+            if (parsed.type === "text-delta" && parsed.delta) {
+              fullContent += parsed.delta
+              setResult(fullContent)
+            } else if (parsed.type === "error") {
+              throw new Error(parsed.errorText ?? "Comparison failed")
+            }
+          } catch (parseError) {
+            if (parseError instanceof Error && parseError.message !== "Comparison failed") {
+              // ignore malformed SSE lines
             }
           }
         }
@@ -102,7 +108,6 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
     setIsLoading(false)
   }
 
-  // Reset state when dialog closes
   useEffect(() => {
     if (!open) {
       setResult("")
@@ -118,20 +123,22 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2">
           <GitCompare className="size-4" />
-          Compare {selectedPaperIds.length} Papers
+          <span className="hidden sm:inline">Compare</span>
+          <span className="rounded-full bg-primary/10 px-1.5 text-xs font-medium text-primary">
+            {selectedPaperIds.length}
+          </span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
+      <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col">
         <DialogHeader>
           <DialogTitle className="font-sans">Compare Papers</DialogTitle>
           <DialogDescription>
-            Select a comparison type to analyze the selected papers.
+            Analyze {selectedPaperIds.length} selected papers with Claude Opus 4.7.
           </DialogDescription>
         </DialogHeader>
 
-        {/* Selected Papers */}
         <div className="flex flex-wrap gap-2">
           {selectedPapers.map((paper) => (
             <div
@@ -144,7 +151,6 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
           ))}
         </div>
 
-        {/* Comparison Type Selection */}
         {!result && !isLoading && (
           <div className="grid grid-cols-2 gap-2">
             <ComparisonTypeButton
@@ -178,11 +184,10 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
           </div>
         )}
 
-        {/* Results Area */}
         {(result || isLoading || error) && (
-          <ScrollArea className="flex-1 min-h-[300px] rounded-lg border border-border bg-muted/30 p-4">
+          <ScrollArea className="min-h-[280px] flex-1 rounded-lg border border-border bg-muted/30 p-4">
             {error ? (
-              <div className="text-destructive">{error}</div>
+              <div className="text-sm text-destructive">{error}</div>
             ) : (
               <div className="prose prose-sm dark:prose-invert max-w-none">
                 {result.split("\n").map((line, i) => (
@@ -193,7 +198,7 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
                 {isLoading && (
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="size-4 animate-spin" />
-                    Analyzing papers...
+                    Analyzing papers…
                   </span>
                 )}
               </div>
@@ -201,7 +206,6 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
           </ScrollArea>
         )}
 
-        {/* Actions */}
         <div className="flex justify-end gap-2">
           {isLoading ? (
             <Button variant="outline" onClick={handleCancel}>

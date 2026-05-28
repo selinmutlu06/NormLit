@@ -306,8 +306,8 @@ export default function LandingPage() {
                 Ready to Explore Your Literature?
               </h2>
               <p className="mt-4 text-muted-foreground">
-                Start chatting with your papers today. Upload your PDFs and let AI help you 
-                navigate your research library.
+                Start chatting with your papers today. Drop PDFs in the chat sidebar and get
+                cited answers powered by Claude Opus 4.7.
               </p>
               <div className="mt-8">
                 <Button asChild size="lg">

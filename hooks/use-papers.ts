@@ -3,10 +3,11 @@ import { Paper } from "@/lib/types"
 
 async function fetchPapers(): Promise<Paper[]> {
   const response = await fetch("/api/papers")
+  const data = await response.json()
   if (!response.ok) {
-    throw new Error("Failed to fetch papers")
+    throw new Error(data.error ?? "Failed to fetch papers")
   }
-  return response.json()
+  return data
 }
 
 export function usePapers() {

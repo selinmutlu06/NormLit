@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import Link from "next/link"
-import { BookOpen, Send, ArrowLeft, Loader2 } from "lucide-react"
+import { BookOpen, Send, ArrowLeft, Loader2, AlertCircle, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -12,37 +12,59 @@ import { ChatMessage } from "@/components/chat-message"
 import { PaperSidebar } from "@/components/paper-sidebar"
 import { ComparePanel } from "@/components/compare-panel"
 import { usePapers } from "@/hooks/use-papers"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+const SUGGESTIONS = [
+  "What are the main findings across these papers?",
+  "Compare the methodologies used in these studies",
+  "What gaps in the literature do these papers identify?",
+]
 
 export default function ChatPage() {
   const [input, setInput] = useState("")
   const [selectedPaperIds, setSelectedPaperIds] = useState<string[]>([])
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [chatModel, setChatModel] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const selectedPaperIdsRef = useRef(selectedPaperIds)
 
-  const { papers, isLoading: papersLoading } = usePapers()
+  selectedPaperIdsRef.current = selectedPaperIds
 
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-      prepareSendMessagesRequest: ({ id, messages }) => ({
-        body: {
-          messages,
-          id,
-          selectedPaperIds,
-        },
+  const { papers, isLoading: papersLoading, error: papersError, mutate } = usePapers()
+
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        prepareSendMessagesRequest: ({ id, messages }) => ({
+          body: {
+            messages,
+            id,
+            selectedPaperIds: selectedPaperIdsRef.current,
+          },
+        }),
       }),
-    }),
+    [],
+  )
+
+  const { messages, sendMessage, status, error: chatError } = useChat({
+    transport,
   })
 
   const isLoading = status === "streaming" || status === "submitted"
 
-  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    fetch("/api/config")
+      .then((res) => res.json())
+      .then((data) => setChatModel(data.chatModel ?? null))
+      .catch(() => setChatModel(null))
+  }, [])
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
@@ -50,14 +72,19 @@ export default function ChatPage() {
     }
   }, [input])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-    sendMessage({ text: input })
+  const submitMessage = (text: string) => {
+    const trimmed = text.trim()
+    if (!trimmed || isLoading) return
+    sendMessage({ text: trimmed })
     setInput("")
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
     }
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    submitMessage(input)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -71,13 +98,14 @@ export default function ChatPage() {
     setSelectedPaperIds((prev) =>
       prev.includes(paperId)
         ? prev.filter((id) => id !== paperId)
-        : [...prev, paperId]
+        : [...prev, paperId],
     )
   }
 
+  const configError = papersError?.message
+
   return (
     <div className="flex h-screen bg-background">
-      {/* Sidebar */}
       <PaperSidebar
         papers={papers}
         isLoading={papersLoading}
@@ -85,12 +113,11 @@ export default function ChatPage() {
         onTogglePaper={togglePaper}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
+        onPapersChange={() => mutate()}
       />
 
-      {/* Main Chat Area */}
-      <div className="flex flex-1 flex-col">
-        {/* Header */}
-        <header className="flex items-center justify-between border-b border-border px-4 py-3">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex shrink-0 items-center justify-between border-b border-border bg-card/50 px-4 py-3 backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -105,9 +132,17 @@ export default function ChatPage() {
               <span className="text-sm text-muted-foreground">Back</span>
             </Link>
           </div>
-          <div className="flex items-center gap-2">
-            <BookOpen className="size-5 text-foreground" />
-            <span className="font-sans text-lg font-semibold">NormLit</span>
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-2">
+              <BookOpen className="size-5 text-primary" />
+              <span className="font-sans text-lg font-semibold">NormLit</span>
+            </div>
+            {chatModel && (
+              <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <Sparkles className="size-3" />
+                {chatModel}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <ComparePanel papers={papers} selectedPaperIds={selectedPaperIds} />
@@ -115,42 +150,49 @@ export default function ChatPage() {
           </div>
         </header>
 
-        {/* Messages */}
+        {(configError || chatError) && (
+          <div className="shrink-0 border-b border-border px-4 py-3">
+            <Alert variant="destructive">
+              <AlertCircle className="size-4" />
+              <AlertTitle>Something went wrong</AlertTitle>
+              <AlertDescription>
+                {chatError?.message ?? configError}
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-3xl px-4 py-8">
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <BookOpen className="size-12 text-muted-foreground/50" />
-                <h2 className="mt-4 font-sans text-xl font-semibold text-foreground">
-                  Start a Conversation
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10">
+                  <BookOpen className="size-8 text-primary" />
+                </div>
+                <h2 className="mt-6 font-sans text-2xl font-semibold text-foreground">
+                  Research chat
                 </h2>
-                <p className="mt-2 max-w-md text-sm text-muted-foreground">
-                  Ask questions about your papers. Select specific papers in the
-                  sidebar to focus your search, or leave them unselected to
-                  search across all papers.
+                <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+                  Upload PDFs in the sidebar, then ask questions. Answers are grounded
+                  in your library with citations.
+                  {papers.length === 0 && !papersLoading && (
+                    <>
+                      {" "}
+                      <strong className="text-foreground">Start by dropping a PDF</strong>{" "}
+                      in the left panel.
+                    </>
+                  )}
                 </p>
-                <div className="mt-6 flex flex-wrap justify-center gap-2">
-                  <SuggestionChip
-                    onClick={() => {
-                      setInput("What are the main findings across these papers?")
-                    }}
-                  >
-                    Main findings overview
-                  </SuggestionChip>
-                  <SuggestionChip
-                    onClick={() => {
-                      setInput("Compare the methodologies used in these studies")
-                    }}
-                  >
-                    Compare methodologies
-                  </SuggestionChip>
-                  <SuggestionChip
-                    onClick={() => {
-                      setInput("What gaps in the literature do these papers identify?")
-                    }}
-                  >
-                    Literature gaps
-                  </SuggestionChip>
+                <div className="mt-8 flex w-full max-w-lg flex-wrap justify-center gap-2">
+                  {SUGGESTIONS.map((suggestion) => (
+                    <SuggestionChip
+                      key={suggestion}
+                      onClick={() => submitMessage(suggestion)}
+                      disabled={isLoading}
+                    >
+                      {suggestion}
+                    </SuggestionChip>
+                  ))}
                 </div>
               </div>
             ) : (
@@ -159,9 +201,9 @@ export default function ChatPage() {
                   <ChatMessage key={message.id} message={message} />
                 ))}
                 {isLoading && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-4 py-3 text-muted-foreground">
                     <Loader2 className="size-4 animate-spin" />
-                    <span className="text-sm">Searching papers...</span>
+                    <span className="text-sm">Searching papers and drafting answer…</span>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -170,27 +212,28 @@ export default function ChatPage() {
           </div>
         </div>
 
-        {/* Input Area */}
-        <div className="border-t border-border bg-background p-4">
+        <div className="shrink-0 border-t border-border bg-card/30 p-4 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="mx-auto max-w-3xl">
-            <div className="relative flex items-end gap-2">
-              <div className="relative flex-1">
-                <Textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask about your papers..."
-                  className="min-h-[44px] max-h-[200px] resize-none pr-12"
-                  disabled={isLoading}
-                  rows={1}
-                />
-              </div>
+            <div className="flex items-end gap-2 rounded-xl border border-border bg-background p-2 shadow-sm">
+              <Textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={
+                  papers.length === 0
+                    ? "Upload papers first, then ask a question…"
+                    : "Ask about your papers…"
+                }
+                className="min-h-[44px] max-h-[200px] flex-1 resize-none border-0 bg-transparent shadow-none focus-visible:ring-0"
+                disabled={isLoading}
+                rows={1}
+              />
               <Button
                 type="submit"
                 size="icon"
                 disabled={!input.trim() || isLoading}
-                className="shrink-0"
+                className="shrink-0 rounded-lg"
               >
                 {isLoading ? (
                   <Loader2 className="size-4 animate-spin" />
@@ -200,8 +243,8 @@ export default function ChatPage() {
               </Button>
             </div>
             {selectedPaperIds.length > 0 && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Searching {selectedPaperIds.length} selected paper
+              <p className="mt-2 text-center text-xs text-muted-foreground">
+                Focused on {selectedPaperIds.length} selected paper
                 {selectedPaperIds.length !== 1 ? "s" : ""}
               </p>
             )}
@@ -215,15 +258,18 @@ export default function ChatPage() {
 function SuggestionChip({
   children,
   onClick,
+  disabled,
 }: {
   children: React.ReactNode
   onClick: () => void
+  disabled?: boolean
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      disabled={disabled}
+      className="rounded-full border border-border bg-card px-4 py-2 text-left text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-foreground disabled:opacity-50"
     >
       {children}
     </button>

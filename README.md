@@ -1,5 +1,7 @@
 # NormLit - Research Literature Assistant
 
+**Live app:** [https://v0-normlit-research-assistant.vercel.app](https://v0-normlit-research-assistant.vercel.app) · Chat: [/chat](https://v0-normlit-research-assistant.vercel.app/chat)
+
 A RAG-powered research assistant for cognitive neuroscience labs. Chat with your paper library, get cited answers, and compare findings across studies.
 
 ## Features
@@ -15,7 +17,7 @@ A RAG-powered research assistant for cognitive neuroscience labs. Chat with your
 - **Frontend**: Next.js 16, React, Tailwind CSS, shadcn/ui
 - **Backend**: Next.js API Routes, Vercel AI SDK 6
 - **Database**: Supabase (PostgreSQL + pgvector)
-- **AI**: OpenAI GPT-4o (chat), text-embedding-3-small (embeddings)
+- **AI**: Claude Opus 4.7 (chat), OpenAI text-embedding-3-small (embeddings)
 
 ## Setup
 
@@ -25,12 +27,15 @@ Create a `.env.local` file with:
 
 ```bash
 # Supabase
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
-# OpenAI (for embeddings in ingestion script)
+# OpenAI (embeddings for semantic search)
 OPENAI_API_KEY=your_openai_api_key
+
+# Anthropic (chat — Claude Opus 4.7)
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
 ### 2. Database Setup
@@ -65,7 +70,9 @@ CREATE TABLE paper_chunks (
 
 ### 3. Ingest Papers
 
-Place your PDF files in a directory and run the ingestion script:
+**In the app:** Open `/chat` and drag PDFs into the sidebar upload zone.
+
+**Or via CLI:** Place your PDF files in a directory and run the ingestion script:
 
 ```bash
 npx tsx scripts/ingest-papers.ts ./path/to/papers

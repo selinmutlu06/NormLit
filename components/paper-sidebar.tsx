@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Paper } from "@/lib/types"
 import { Search, FileText, ChevronLeft, ChevronRight, Check } from "lucide-react"
+import { PaperUpload } from "@/components/paper-upload"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -16,6 +17,7 @@ interface PaperSidebarProps {
   onTogglePaper: (paperId: string) => void
   isOpen: boolean
   onToggle: () => void
+  onPapersChange?: () => void
 }
 
 export function PaperSidebar({
@@ -25,6 +27,7 @@ export function PaperSidebar({
   onTogglePaper,
   isOpen,
   onToggle,
+  onPapersChange,
 }: PaperSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [yearFilter, setYearFilter] = useState<number | null>(null)
@@ -72,6 +75,10 @@ export function PaperSidebar({
           >
             <ChevronLeft className="size-4" />
           </Button>
+        </div>
+
+        <div className="border-b border-border p-4">
+          <PaperUpload compact onUploaded={onPapersChange} />
         </div>
 
         {/* Search */}
