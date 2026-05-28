@@ -19,28 +19,18 @@ async function applySchemaWithPg(): Promise<void> {
   let config: ConstructorParameters<typeof import('pg').Client>[0] | null = null
 
   if (connectionString) {
-    const parsed = new URL(connectionString.replace('postgres://', 'https://'))
     config = {
-      host: parsed.hostname,
-      port: Number(parsed.port) === 6543 ? 5432 : Number(parsed.port || 5432),
-      user: decodeURIComponent(parsed.username),
-      password: decodeURIComponent(parsed.password),
-      database: parsed.pathname.replace('/', '') || 'postgres',
+      connectionString,
       ssl: { rejectUnauthorized: false },
     }
-  } else {
-    const url = getSupabaseUrl()
-    const password = process.env.POSTGRES_PASSWORD
-    if (url && password) {
-      const ref = url.replace('https://', '').replace('.supabase.co', '')
-      config = {
-        host: `db.${ref}.supabase.co`,
-        port: 5432,
-        user: 'postgres',
-        password,
-        database: 'postgres',
-        ssl: { rejectUnauthorized: false },
-      }
+  } else if (process.env.POSTGRES_HOST && process.env.POSTGRES_PASSWORD) {
+    config = {
+      host: process.env.POSTGRES_HOST,
+      port: Number(process.env.POSTGRES_PORT ?? 5432),
+      user: process.env.POSTGRES_USER ?? 'postgres',
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DATABASE ?? 'postgres',
+      ssl: { rejectUnauthorized: false },
     }
   }
 
