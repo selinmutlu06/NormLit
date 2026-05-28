@@ -10,6 +10,7 @@ interface ContentImageProps {
   height?: number
   priority?: boolean
   showCredit?: boolean
+  objectFit?: 'cover' | 'contain'
 }
 
 export function ContentImage({
@@ -20,6 +21,7 @@ export function ContentImage({
   height,
   priority,
   showCredit = false,
+  objectFit = 'cover',
 }: ContentImageProps) {
   const item = media[mediaKey]
 
@@ -31,7 +33,7 @@ export function ContentImage({
           alt={item.alt}
           fill
           priority={priority}
-          className="object-cover"
+          className={objectFit === 'contain' ? 'object-contain' : 'object-cover'}
           sizes="(max-width: 768px) 100vw, 50vw"
         />
         {showCredit && (
@@ -51,7 +53,10 @@ export function ContentImage({
         width={width ?? 800}
         height={height ?? 600}
         priority={priority}
-        className="h-auto w-full rounded-lg object-cover"
+        className={cn(
+          'h-auto w-full rounded-lg',
+          objectFit === 'contain' ? 'object-contain' : 'object-cover',
+        )}
       />
       {showCredit && (
         <figcaption className="text-[10px] text-muted-foreground">{item.credit}</figcaption>

@@ -1,6 +1,5 @@
 /**
- * Curated media — real photos/diagrams with known sources.
- * Prefer these paths over legacy v0-generated images in /public/images.
+ * Curated media — verified diagrams and Wikimedia Commons photos only.
  */
 
 export const media = {
@@ -10,17 +9,17 @@ export const media = {
     alt: 'International 10-20 EEG electrode placement diagram (modified combinatorial nomenclature)',
     credit: 'Wikimedia Commons — International 10-20 system for EEG-MCN',
   },
-  /** Unsplash — laboratory research */
-  researchLab: {
-    src: '/images/lab-researcher.jpg',
-    alt: 'Researcher working in a laboratory',
-    credit: 'Unsplash',
+  /** Wikimedia Commons — EEG Recording Cap.jpg (CC BY-SA) */
+  eegRecordingCap: {
+    src: '/images/eeg-recording-cap.jpg',
+    alt: 'EEG recording cap with electrodes placed on the scalp',
+    credit: 'Wikimedia Commons — EEG Recording Cap',
   },
-  /** Unsplash — clinical / medical research */
-  medicalResearch: {
-    src: '/images/medical-research.jpg',
-    alt: 'Medical research and clinical science setting',
-    credit: 'Unsplash',
+  /** Wikimedia Commons — U.S. Navy BUMED, public domain */
+  eegClinicalSetup: {
+    src: '/images/eeg-clinical-setup.jpg',
+    alt: 'Clinician operating an EEG machine during a recording session',
+    credit: 'Wikimedia Commons — U.S. Navy BUMED Library and Archives',
   },
 } as const
 

@@ -2,9 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { ContentImage } from "@/components/content-image"
-import { media } from "@/lib/media"
+import type { MediaKey } from "@/lib/media"
 import { 
   BookOpen, 
   ChevronRight, 
@@ -20,7 +19,10 @@ import {
   ArrowLeft,
   ChevronDown,
   Play,
-  Pause
+  Pause,
+  ClipboardCheck,
+  Ruler,
+  type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -364,8 +366,7 @@ export default function EEGGuidePage() {
                       tips={["Use clear, non-technical language", "Allow time for questions", "Provide a copy of signed consent"]}
                       completed={completedSteps.includes("prep-1")}
                       onToggle={() => toggleStep("prep-1")}
-                      imageUrl={media.researchLab.src}
-                      imageAlt={media.researchLab.alt}
+                      icon={ClipboardCheck}
                     />
                     
                     <StepCard
@@ -375,8 +376,7 @@ export default function EEGGuidePage() {
                       tips={["Measure twice for accuracy", "Round up if between sizes", "Record measurement in participant file"]}
                       completed={completedSteps.includes("prep-2")}
                       onToggle={() => toggleStep("prep-2")}
-                      imageUrl={media.medicalResearch.src}
-                      imageAlt={media.medicalResearch.alt}
+                      icon={Ruler}
                     />
 
                     <StepCard
@@ -386,8 +386,7 @@ export default function EEGGuidePage() {
                       tips={["Use a skin-safe marker if needed", "These landmarks ensure consistent placement", "Cz should be exactly between nasion-inion and preauricular points"]}
                       completed={completedSteps.includes("prep-3")}
                       onToggle={() => toggleStep("prep-3")}
-                      imageUrl={media.eeg1020.src}
-                      imageAlt={media.eeg1020.alt}
+                      mediaKey="eeg1020"
                     />
 
                     <StepCard
@@ -397,8 +396,7 @@ export default function EEGGuidePage() {
                       tips={["Be gentle - avoid irritating the skin", "Let alcohol dry completely before gel application", "For external electrodes, clean mastoid areas"]}
                       completed={completedSteps.includes("prep-4")}
                       onToggle={() => toggleStep("prep-4")}
-                      imageUrl={media.medicalResearch.src}
-                      imageAlt={media.medicalResearch.alt}
+                      mediaKey="eegRecordingCap"
                     />
                   </CardContent>
                 </Card>
@@ -455,8 +453,7 @@ export default function EEGGuidePage() {
                       tips={["Check that status LED indicates proper connection", "Route cables to minimize movement artifacts", "Ensure battery is fully charged before session"]}
                       completed={completedSteps.includes("setup-4")}
                       onToggle={() => toggleStep("setup-4")}
-                      imageUrl={media.medicalResearch.src}
-                      imageAlt={media.medicalResearch.alt}
+                      mediaKey="eegClinicalSetup"
                     />
                   </CardContent>
                 </Card>
@@ -579,8 +576,8 @@ export default function EEGGuidePage() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">
-                      <div className="relative aspect-square overflow-hidden rounded-xl border border-border">
-                        <ContentImage mediaKey="medicalResearch" fill className="absolute inset-0" />
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-muted/30">
+                        <ContentImage mediaKey="eegRecordingCap" fill objectFit="contain" className="absolute inset-0" />
                       </div>
                       <div className="space-y-4">
                         <h3 className="font-sans text-xl font-semibold">About SignaGel</h3>
@@ -617,8 +614,7 @@ export default function EEGGuidePage() {
                       tips={["Remove air bubbles from syringe", "Keep gel at room temperature", "Have 2-3 syringes prepared in advance"]}
                       completed={completedSteps.includes("gel-1")}
                       onToggle={() => toggleStep("gel-1")}
-                      imageUrl={media.medicalResearch.src}
-                      imageAlt={media.medicalResearch.alt}
+                      icon={Droplets}
                     />
 
                     <StepCard
@@ -637,8 +633,7 @@ export default function EEGGuidePage() {
                       tips={["Don't overfill - gel bridges between electrodes cause shorts", "A small amount (pea-sized) is usually sufficient", "You should feel slight resistance as gel contacts scalp"]}
                       completed={completedSteps.includes("gel-3")}
                       onToggle={() => toggleStep("gel-3")}
-                      imageUrl={media.medicalResearch.src}
-                      imageAlt={media.medicalResearch.alt}
+                      mediaKey="eegRecordingCap"
                     />
 
                     <StepCard
@@ -648,8 +643,7 @@ export default function EEGGuidePage() {
                       tips={["Start recording to see live impedance values", "Focus on problem electrodes first", "Document any persistently high-impedance channels"]}
                       completed={completedSteps.includes("gel-4")}
                       onToggle={() => toggleStep("gel-4")}
-                      imageUrl={media.medicalResearch.src}
-                      imageAlt={media.medicalResearch.alt}
+                      mediaKey="eegClinicalSetup"
                     />
                   </CardContent>
                 </Card>
@@ -868,8 +862,6 @@ export default function EEGGuidePage() {
                       tips={["Offer a comb or brush", "Provide privacy if using shower", "Have extra towels available"]}
                       completed={completedSteps.includes("clean-2")}
                       onToggle={() => toggleStep("clean-2")}
-                      imageUrl={media.researchLab.src}
-                      imageAlt={media.researchLab.alt}
                     />
 
                     <StepCard
@@ -988,11 +980,11 @@ interface StepCardProps {
   tips: string[]
   completed: boolean
   onToggle: () => void
-  imageUrl?: string
-  imageAlt?: string
+  mediaKey?: MediaKey
+  icon?: LucideIcon
 }
 
-function StepCard({ step, title, description, tips, completed, onToggle, imageUrl, imageAlt }: StepCardProps) {
+function StepCard({ step, title, description, tips, completed, onToggle, mediaKey, icon: Icon }: StepCardProps) {
   return (
     <div className={`relative rounded-xl border p-6 transition-colors ${
       completed ? "border-primary/50 bg-primary/5" : "border-border"
@@ -1027,15 +1019,19 @@ function StepCard({ step, title, description, tips, completed, onToggle, imageUr
           )}
         </div>
         
-        {imageUrl && (
-          <div className="hidden md:block w-48 h-32 rounded-lg overflow-hidden border border-border shrink-0">
-            <Image
-              src={imageUrl}
-              alt={imageAlt ?? title}
-              width={192}
-              height={128}
-              className="h-full w-full object-cover"
+        {mediaKey && (
+          <div className="hidden md:block w-44 shrink-0 overflow-hidden rounded-lg border border-border bg-muted/30">
+            <ContentImage
+              mediaKey={mediaKey}
+              width={176}
+              height={132}
+              className="[&_img]:h-32 [&_img]:w-full [&_img]:object-contain"
             />
+          </div>
+        )}
+        {!mediaKey && Icon && (
+          <div className="hidden md:flex size-20 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary">
+            <Icon className="size-9" strokeWidth={1.5} />
           </div>
         )}
       </div>
