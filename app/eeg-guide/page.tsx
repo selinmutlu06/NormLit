@@ -414,27 +414,11 @@ export default function EEGGuidePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <ContentImage
-                        mediaKey="eeg1020"
-                        width={1024}
-                        height={916}
-                        className="mx-auto max-h-80 w-auto"
-                        showCredit
-                      />
-                      <p className="mt-3 text-center text-sm font-medium">
-                        10-20 System Electrode Placement
+                    <div className="rounded-xl border border-border bg-muted/20 p-4 sm:p-6">
+                      <p className="mb-4 text-center text-sm text-muted-foreground">
+                        10-20 system — click an electrode for placement notes. Align <span className="font-mono font-medium text-foreground">Cz</span> at the vertex.
                       </p>
-                      <p className="text-center text-xs text-muted-foreground">
-                        Standard international electrode positions (MCN labels)
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl border border-border bg-muted/30 p-4">
-                      <p className="mb-4 text-center text-sm font-medium text-muted-foreground">
-                        Interactive map — click an electrode for details
-                      </p>
-                      <ElectrodeMap size="md" />
+                      <ElectrodeMap variant="guide" />
                     </div>
 
                     <StepCard
@@ -453,8 +437,6 @@ export default function EEGGuidePage() {
                       tips={["Have participant hold front of cap while you adjust back", "Check symmetry by comparing left and right electrode positions", "Cz should be at the very top of the head"]}
                       completed={completedSteps.includes("setup-2")}
                       onToggle={() => toggleStep("setup-2")}
-                      imageUrl={media.eeg1020.src}
-                      imageAlt={media.eeg1020.alt}
                     />
 
                     <StepCard
@@ -476,18 +458,6 @@ export default function EEGGuidePage() {
                       imageUrl={media.medicalResearch.src}
                       imageAlt={media.medicalResearch.alt}
                     />
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="font-sans text-xl">Interactive Electrode Map</CardTitle>
-                    <CardDescription>
-                      Click on any electrode to see detailed information about its position and brain region
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ElectrodeMap size="lg" showLabels={true} />
                   </CardContent>
                 </Card>
 

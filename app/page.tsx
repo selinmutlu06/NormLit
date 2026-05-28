@@ -232,7 +232,7 @@ export default function LandingPage() {
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
               <div className="order-2 space-y-4 lg:order-1">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border shadow-lg">
-                  <ContentImage mediaKey="researchLab" fill className="absolute inset-0" />
+                  <ContentImage mediaKey="eeg1020" fill className="absolute inset-0 object-contain p-4 bg-muted/30" />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
                     <div className="flex items-center gap-2 text-sm text-foreground">

@@ -108,18 +108,28 @@ const regionColors = {
   reference: { bg: "bg-gray-500/20", border: "border-gray-500", text: "text-gray-600 dark:text-gray-400", fill: "#6b7280" },
 }
 
+/** Core 10-20 positions for training — avoids cluttering the map with 10-10 extensions */
+const GUIDE_ELECTRODE_IDS = [
+  "Fp1", "Fp2", "Fz", "F3", "F4", "F7", "F8",
+  "Cz", "C3", "C4", "T7", "T8",
+  "Pz", "P3", "P4", "O1", "O2", "Oz",
+] as const
+
 interface ElectrodeMapProps {
   highlightedRegion?: string
   onElectrodeClick?: (electrode: typeof electrodes[0]) => void
   showLabels?: boolean
   size?: "sm" | "md" | "lg"
+  /** "guide" = fewer electrodes, legend below map, no naming sidebar */
+  variant?: "full" | "guide"
 }
 
 export function ElectrodeMap({ 
   highlightedRegion, 
   onElectrodeClick,
   showLabels = true,
-  size = "lg"
+  size = "lg",
+  variant = "full",
 }: ElectrodeMapProps) {
   const [hoveredElectrode, setHoveredElectrode] = useState<typeof electrodes[0] | null>(null)
   const [selectedElectrode, setSelectedElectrode] = useState<typeof electrodes[0] | null>(null)
@@ -141,34 +151,47 @@ export function ElectrodeMap({
     onElectrodeClick?.(electrode)
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 justify-center">
-        {Object.entries(regionColors).map(([region, colors]) => (
-          <div 
+  const isGuide = variant === "guide"
+  const visibleElectrodes = isGuide
+    ? electrodes.filter((e) => GUIDE_ELECTRODE_IDS.includes(e.id as (typeof GUIDE_ELECTRODE_IDS)[number]))
+    : electrodes
+  const mapSize = isGuide ? "md" : size
+  const showElectrodeLabels = isGuide ? true : showLabels
+  const dotScale = isGuide ? 1.25 : 1
+
+  const legend = (
+    <div className="flex flex-wrap gap-2 justify-center">
+      {Object.entries(regionColors)
+        .filter(([region]) => region !== "reference" || !isGuide)
+        .map(([region, colors]) => (
+          <div
             key={region}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium capitalize transition-opacity",
+              "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium capitalize transition-opacity",
               colors.bg,
               colors.border,
               colors.text,
-              highlightedRegion && highlightedRegion !== region && "opacity-40"
+              highlightedRegion && highlightedRegion !== region && "opacity-40",
             )}
           >
-            <div 
-              className="size-2.5 rounded-full" 
-              style={{ backgroundColor: colors.fill }}
-            />
+            <div className="size-2 rounded-full" style={{ backgroundColor: colors.fill }} />
             {region}
           </div>
         ))}
-      </div>
+    </div>
+  )
 
+  return (
+    <div className="space-y-4">
       {/* Main map container */}
-      <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
+      <div
+        className={cn(
+          "flex flex-col gap-4 items-center justify-center",
+          !isGuide && "lg:flex-row lg:items-start lg:gap-6",
+        )}
+      >
         {/* SVG Map */}
-        <div className={cn("relative mx-auto", sizeClasses[size])}>
+        <div className={cn("relative mx-auto shrink-0", sizeClasses[mapSize])}>
           <svg 
             viewBox="0 0 100 100" 
             className="w-full h-full"
@@ -202,7 +225,7 @@ export function ElectrodeMap({
             <line x1="5" y1="50" x2="95" y2="50" stroke="currentColor" strokeWidth="0.2" className="text-border" strokeDasharray="2,2" />
             
             {/* Electrodes */}
-            {electrodes.map((electrode) => {
+            {visibleElectrodes.map((electrode) => {
               const colors = regionColors[electrode.region as keyof typeof regionColors]
               const isHighlighted = !highlightedRegion || highlightedRegion === electrode.region
               const isHovered = hoveredElectrode?.id === electrode.id
@@ -225,7 +248,7 @@ export function ElectrodeMap({
                   <circle
                     cx={electrode.x}
                     cy={electrode.y}
-                    r={electrodeSizes[size].r / 10}
+                    r={(electrodeSizes[mapSize].r * dotScale) / 10}
                     fill={colors.fill}
                     stroke={isSelected ? "#fff" : "transparent"}
                     strokeWidth={isSelected ? 0.3 : 0}
@@ -233,13 +256,13 @@ export function ElectrodeMap({
                   />
                   
                   {/* Label */}
-                  {showLabels && (
+                  {showElectrodeLabels && (
                     <text
                       x={electrode.x}
                       y={electrode.y}
                       textAnchor="middle"
                       dominantBaseline="central"
-                      fontSize={electrodeSizes[size].fontSize / 10}
+                      fontSize={electrodeSizes[mapSize].fontSize / 10}
                       fontWeight="500"
                       fill="#fff"
                       className="pointer-events-none select-none font-mono"
@@ -270,108 +293,99 @@ export function ElectrodeMap({
         </div>
 
         {/* Info Panel */}
-        <div className="w-full lg:w-72 space-y-4">
+        <div className={cn("w-full space-y-4", !isGuide && "lg:w-72")}>
           {selectedElectrode ? (
-            <div className="p-4 rounded-lg border border-border bg-card space-y-3">
+            <div className="rounded-lg border border-border bg-card space-y-2 p-4">
               <div className="flex items-center justify-between">
-                <span 
+                <span
                   className={cn(
-                    "font-mono text-2xl font-bold",
-                    regionColors[selectedElectrode.region as keyof typeof regionColors].text
+                    "font-mono text-xl font-bold",
+                    regionColors[selectedElectrode.region as keyof typeof regionColors].text,
                   )}
                 >
                   {selectedElectrode.id}
                 </span>
-                <span 
+                <span
                   className={cn(
-                    "px-2 py-1 rounded-full text-xs font-medium capitalize",
+                    "rounded-full px-2 py-1 text-xs font-medium capitalize",
                     regionColors[selectedElectrode.region as keyof typeof regionColors].bg,
-                    regionColors[selectedElectrode.region as keyof typeof regionColors].text
+                    regionColors[selectedElectrode.region as keyof typeof regionColors].text,
                   )}
                 >
                   {selectedElectrode.region}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">{selectedElectrode.description}</p>
-              <div className="pt-2 border-t border-border space-y-2">
-                <p className="text-xs text-muted-foreground">
-                  <span className="font-medium">Position:</span> ({selectedElectrode.x}%, {selectedElectrode.y}%)
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  <span className="font-medium">Naming:</span>{" "}
-                  {selectedElectrode.id.includes("z") ? "Midline (z = zero)" :
-                   selectedElectrode.id.match(/[13579]$/) ? "Left hemisphere (odd numbers)" :
-                   selectedElectrode.id.match(/[2468]$/) ? "Right hemisphere (even numbers)" :
-                   "Reference electrode"}
-                </p>
-              </div>
+              {!isGuide && (
+                <div className="space-y-2 border-t border-border pt-2">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium">Position:</span> ({selectedElectrode.x}%, {selectedElectrode.y}%)
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-medium">Naming:</span>{" "}
+                    {selectedElectrode.id.includes("z")
+                      ? "Midline (z = zero)"
+                      : selectedElectrode.id.match(/[13579]$/)
+                        ? "Left hemisphere (odd numbers)"
+                        : selectedElectrode.id.match(/[2468]$/)
+                          ? "Right hemisphere (even numbers)"
+                          : "Reference electrode"}
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="p-4 rounded-lg border border-dashed border-border bg-muted/30 text-center">
-              <p className="text-sm text-muted-foreground">
-                Click on an electrode to see details
-              </p>
-            </div>
+            <p className="text-center text-sm text-muted-foreground">
+              Click an electrode on the map for details
+            </p>
           )}
 
-          {/* Quick reference */}
-          <div className="p-4 rounded-lg border border-border bg-card space-y-3">
-            <h4 className="font-medium text-sm">Electrode Naming Convention</h4>
-            <div className="space-y-2 text-xs text-muted-foreground">
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">Fp</span>
-                <span>Frontopolar</span>
+          {!isGuide && (
+            <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+              <h4 className="text-sm font-medium">Electrode Naming Convention</h4>
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <div className="flex items-start gap-2">
+                  <span className="w-8 font-mono font-semibold text-foreground">Fp</span>
+                  <span>Frontopolar</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-8 font-mono font-semibold text-foreground">F</span>
+                  <span>Frontal</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-8 font-mono font-semibold text-foreground">C</span>
+                  <span>Central</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-8 font-mono font-semibold text-foreground">P</span>
+                  <span>Parietal</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-8 font-mono font-semibold text-foreground">O</span>
+                  <span>Occipital</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-8 font-mono font-semibold text-foreground">T</span>
+                  <span>Temporal</span>
+                </div>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">AF</span>
-                <span>Anterior Frontal</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">F</span>
-                <span>Frontal</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">FC</span>
-                <span>Frontocentral</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">C</span>
-                <span>Central</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">CP</span>
-                <span>Centroparietal</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">P</span>
-                <span>Parietal</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">PO</span>
-                <span>Parieto-occipital</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">O</span>
-                <span>Occipital</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <span className="font-mono font-semibold text-foreground w-8">T</span>
-                <span>Temporal</span>
+              <div className="space-y-1 border-t border-border pt-2 text-xs text-muted-foreground">
+                <p><span className="font-medium">z</span> = Midline</p>
+                <p><span className="font-medium">Odd #s</span> = Left hemisphere</p>
+                <p><span className="font-medium">Even #s</span> = Right hemisphere</p>
               </div>
             </div>
-            <div className="pt-2 border-t border-border space-y-1 text-xs text-muted-foreground">
-              <p><span className="font-medium">z</span> = Midline</p>
-              <p><span className="font-medium">Odd #s</span> = Left hemisphere</p>
-              <p><span className="font-medium">Even #s</span> = Right hemisphere</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Electrode count */}
-      <div className="text-center text-sm text-muted-foreground">
-        Showing {electrodes.length} electrode positions (10-10 extended system)
-      </div>
+      {legend}
+
+      {!isGuide && (
+        <p className="text-center text-xs text-muted-foreground">
+          {electrodes.length} positions (10-10 extended). For the standard 10-20 set, use guide mode.
+        </p>
+      )}
     </div>
   )
 }
