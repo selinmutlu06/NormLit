@@ -22,10 +22,6 @@
   <img src="https://img.shields.io/badge/Claude-Opus_4.7-D97706" alt="Claude" />
 </p>
 
-<p align="center">
-  <img src="docs/images/app-landing.png" alt="NormLit landing page" width="900" />
-</p>
-
 ---
 
 ## The problem
@@ -81,7 +77,7 @@ NormLit uses **RAG and vector embeddings** to ground every answer in your upload
 </table>
 
 <p align="center">
-  <img src="docs/images/app-chat.png" alt="NormLit chat interface with paper upload sidebar" width="700" />
+  <img src="docs/images/app-chat.png" alt="NormLit chat interface with paper upload sidebar" width="100%" />
 </p>
 
 ---
@@ -91,7 +87,7 @@ NormLit uses **RAG and vector embeddings** to ground every answer in your upload
 NormLit also ships with a **complete EEG Study Guide**, a step-by-step BioSemi ActiveTwo protocol born from that same 100-page instruction packet. From participant prep to cap setup, gel application, recording, and cleanup.
 
 <p align="center">
-  <img src="docs/images/app-eeg-guide.png" alt="NormLit EEG Study Guide, BioSemi ActiveTwo protocol" width="700" />
+  <img src="docs/images/app-eeg-guide.png" alt="NormLit EEG Study Guide, BioSemi ActiveTwo protocol" width="100%" />
 </p>
 
 <p align="center">
