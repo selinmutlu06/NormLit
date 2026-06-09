@@ -99,13 +99,14 @@ NormLit also ships with a **complete EEG Study Guide**, a step-by-step BioSemi A
 ## How it works
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif", "fontSize": "14px"}}}%%
 flowchart LR
-    A[📄 Upload PDFs] --> B[✂️ Chunk & Embed]
+    A[Upload PDFs] --> B[Chunk and Embed]
     B --> C[(Supabase + pgvector)]
-    D[💬 Your Question] --> E[🔍 Semantic Retrieval]
+    D[Your Question] --> E[Semantic Retrieval]
     C --> E
-    E --> F[🧠 Claude Synthesizes]
-    F --> G[📝 Cited Answer]
+    E --> F[Claude Synthesizes]
+    F --> G[Cited Answer]
 ```
 
 | Step | What happens |
