@@ -66,7 +66,14 @@ export function PaperSidebar({
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border p-4">
-          <h2 className="font-sans text-lg font-semibold">Papers</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-sans text-lg font-semibold tracking-tight">Papers</h2>
+            {!isLoading && papers.length > 0 && (
+              <span className="rounded-full bg-accent/15 px-2 py-0.5 font-mono text-xs font-medium text-accent">
+                {papers.length}
+              </span>
+            )}
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -133,12 +140,17 @@ export function PaperSidebar({
                 ))}
               </div>
             ) : filteredPapers.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <FileText className="size-8 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">
+              <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-muted">
+                  <FileText className="size-6 text-muted-foreground/60" />
+                </div>
+                <p className="mt-3 text-sm font-medium text-foreground">
+                  {papers.length === 0 ? "No papers yet" : "No matches"}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
                   {papers.length === 0
-                    ? "No papers ingested yet"
-                    : "No papers match your search"}
+                    ? "Drop a PDF above to build your library"
+                    : "Try a different search or year"}
                 </p>
               </div>
             ) : (
@@ -158,10 +170,12 @@ export function PaperSidebar({
 
         {/* Selection summary */}
         {selectedPaperIds.length > 0 && (
-          <div className="border-t border-border p-4">
+          <div className="flex items-center gap-2 border-t border-border bg-accent/5 p-4">
+            <span className="flex size-6 items-center justify-center rounded-full bg-accent/15 font-mono text-xs font-semibold text-accent">
+              {selectedPaperIds.length}
+            </span>
             <p className="text-sm text-muted-foreground">
-              {selectedPaperIds.length} paper
-              {selectedPaperIds.length !== 1 ? "s" : ""} selected
+              paper{selectedPaperIds.length !== 1 ? "s" : ""} focused
             </p>
           </div>
         )}
@@ -202,18 +216,18 @@ function PaperCard({
       type="button"
       onClick={onToggle}
       className={cn(
-        "w-full rounded-lg border p-3 text-left transition-colors",
+        "w-full rounded-xl border p-3 text-left transition-all duration-200",
         isSelected
-          ? "border-primary bg-primary/5"
-          : "border-border hover:bg-muted"
+          ? "border-accent/50 bg-accent/5 shadow-sm ring-1 ring-accent/20"
+          : "border-border hover:-translate-y-0.5 hover:border-accent/30 hover:bg-muted/60 hover:shadow-sm"
       )}
     >
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-2.5">
         <div
           className={cn(
-            "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border",
+            "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-md border transition-colors",
             isSelected
-              ? "border-primary bg-primary text-primary-foreground"
+              ? "border-accent bg-accent text-accent-foreground"
               : "border-muted-foreground/30"
           )}
         >

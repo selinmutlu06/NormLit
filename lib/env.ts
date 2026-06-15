@@ -74,7 +74,7 @@ export function assertChatConfig(): void {
   }
   if (!getAnthropicApiKey() && !getOpenAIApiKey()) {
     throw new Error(
-      'Set ANTHROPIC_API_KEY (recommended for Claude Opus 4.7) or OPENAI_API_KEY for chat.',
+      'Set ANTHROPIC_API_KEY (recommended for Claude Opus 4.8) or OPENAI_API_KEY for chat.',
     )
   }
 }

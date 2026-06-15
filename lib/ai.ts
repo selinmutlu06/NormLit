@@ -14,7 +14,7 @@ export function getChatModel(): LanguageModel {
   }
 
   if (getAnthropicApiKey()) {
-    return anthropic('claude-opus-4-7')
+    return anthropic('claude-opus-4-8')
   }
 
   if (getOpenAIApiKey()) {
@@ -22,13 +22,13 @@ export function getChatModel(): LanguageModel {
   }
 
   throw new Error(
-    'No chat provider configured. Add ANTHROPIC_API_KEY (Claude Opus 4.7) or OPENAI_API_KEY to .env.local.',
+    'No chat provider configured. Add ANTHROPIC_API_KEY (Claude Opus 4.8) or OPENAI_API_KEY to .env.local.',
   )
 }
 
 export function getChatModelLabel(): string {
   const preferred = process.env.CHAT_MODEL?.trim().toLowerCase()
   if (preferred === 'openai' || preferred === 'gpt-4o') return 'GPT-4o'
-  if (getAnthropicApiKey()) return 'Claude Opus 4.7'
+  if (getAnthropicApiKey()) return 'Claude Opus 4.8'
   return 'GPT-4o'
 }

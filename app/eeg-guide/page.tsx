@@ -4,9 +4,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { GuideReferencePanel } from "@/components/guide-reference-panel"
 import { 
-  BookOpen, 
-  ChevronRight, 
-  CheckCircle2, 
+  BookOpen,
+  ChevronRight,
+  ChevronLeft,
+  CheckCircle2,
   AlertTriangle, 
   Info,
   Clock,
@@ -117,15 +118,17 @@ export default function EEGGuidePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="glass sticky top-0 z-50 border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <BookOpen className="size-5 text-primary" />
-              <span className="font-sans text-lg font-semibold">NormLit</span>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="group flex items-center gap-2.5">
+              <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-sm transition-transform group-hover:scale-105">
+                <BookOpen className="size-4 text-primary-foreground" />
+              </span>
+              <span className="font-sans text-lg font-semibold tracking-tight">NormLit</span>
             </Link>
-            <span className="text-muted-foreground">/</span>
-            <span className="text-sm font-medium">EEG Study Guide</span>
+            <span className="text-muted-foreground/50">/</span>
+            <span className="text-sm font-medium text-muted-foreground">EEG Study Guide</span>
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
@@ -190,8 +193,9 @@ export default function EEGGuidePage() {
           {/* Main Content */}
           <main className="space-y-8">
             {/* Hero Section */}
-            <div className="relative overflow-hidden rounded-xl border border-border bg-card">
-              <div className="absolute inset-0 bg-grid opacity-50" />
+            <div className="relative overflow-hidden rounded-2xl border bg-card shadow-sm">
+              <div className="aurora" aria-hidden />
+              <div className="absolute inset-0 bg-grid-fade opacity-50" />
               <div className="relative p-8 md:p-12">
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                   <div className="flex-1 space-y-4">
@@ -199,7 +203,7 @@ export default function EEGGuidePage() {
                       BioSemi ActiveTwo Protocol
                     </Badge>
                     <h1 className="font-sans text-3xl md:text-4xl font-bold tracking-tight">
-                      Complete EEG Study Guide
+                      Complete <span className="text-gradient">EEG Study Guide</span>
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl">
                       A comprehensive, step-by-step guide for conducting EEG studies using the 
@@ -238,9 +242,9 @@ export default function EEGGuidePage() {
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className="group flex items-center gap-4 rounded-lg border border-border bg-card p-4 text-left transition-all hover:border-primary/50 hover:shadow-md"
+                  className="card-interactive group flex items-center gap-4 rounded-xl border bg-card p-4 text-left"
                 >
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                     <section.icon className="size-5" />
                   </div>
                   <div className="flex-1">
@@ -720,12 +724,12 @@ export default function EEGGuidePage() {
                   <CardContent className="space-y-6">
                     <div className="rounded-xl border border-border overflow-hidden">
                       <div className="bg-muted/50 p-4 border-b border-border">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                           <div className="flex items-center gap-3">
                             <div className="size-3 rounded-full bg-green-500 animate-pulse" />
                             <span className="font-mono text-sm">Recording Active</span>
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-muted-foreground sm:text-sm">
                             <span>Sample Rate: 2048 Hz</span>
                             <span>Channels: 64</span>
                           </div>
@@ -975,7 +979,7 @@ export default function EEGGuidePage() {
             </Tabs>
 
             {/* Navigation */}
-            <div className="flex items-center justify-between pt-6 border-t border-border">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
               <Link href="/chat">
                 <Button variant="outline" className="gap-2">
                   <ArrowLeft className="size-4" />
@@ -984,25 +988,28 @@ export default function EEGGuidePage() {
               </Link>
               <div className="flex gap-2">
                 {activeSection !== "overview" && (
-                  <Button 
+                  <Button
                     variant="outline"
                     onClick={() => {
                       const currentIndex = sections.findIndex(s => s.id === activeSection)
                       if (currentIndex > 0) setActiveSection(sections[currentIndex - 1].id)
                     }}
                   >
-                    Previous Section
+                    <ChevronLeft className="size-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Previous Section</span>
+                    <span className="sm:hidden">Prev</span>
                   </Button>
                 )}
                 {activeSection !== "cleanup" && (
-                  <Button 
+                  <Button
                     onClick={() => {
                       const currentIndex = sections.findIndex(s => s.id === activeSection)
                       if (currentIndex < sections.length - 1) setActiveSection(sections[currentIndex + 1].id)
                     }}
                   >
-                    Next Section
-                    <ChevronRight className="size-4 ml-1" />
+                    <span className="hidden sm:inline">Next Section</span>
+                    <span className="sm:hidden">Next</span>
+                    <ChevronRight className="size-4 sm:ml-1" />
                   </Button>
                 )}
               </div>
@@ -1026,44 +1033,55 @@ interface StepCardProps {
 
 function StepCard({ step, title, description, tips, completed, onToggle, icon: Icon }: StepCardProps) {
   return (
-    <div className={`relative rounded-xl border p-6 transition-colors ${
-      completed ? "border-primary/50 bg-primary/5" : "border-border"
+    <div className={`relative overflow-hidden rounded-xl border p-4 transition-all duration-200 sm:p-6 ${
+      completed
+        ? "border-accent/40 bg-accent/5 ring-1 ring-accent/15"
+        : "border-border hover:border-accent/30 hover:shadow-sm"
     }`}>
-      <div className="flex gap-6">
+      {/* Accent bar marks a completed step */}
+      <div
+        className={`absolute inset-y-0 left-0 w-1 bg-accent transition-opacity ${completed ? "opacity-100" : "opacity-0"}`}
+        aria-hidden
+      />
+      <div className="flex gap-4 sm:gap-5">
         <button
           onClick={onToggle}
-          className={`flex size-10 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-colors ${
-            completed 
-              ? "border-primary bg-primary text-primary-foreground" 
-              : "border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary"
+          aria-pressed={completed}
+          aria-label={completed ? `Mark step ${step} incomplete` : `Mark step ${step} complete`}
+          className={`flex size-10 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-all hover:scale-105 ${
+            completed
+              ? "border-accent bg-accent text-accent-foreground shadow-sm"
+              : "border-muted-foreground/30 text-muted-foreground hover:border-accent hover:text-accent"
           }`}
         >
           {completed ? <CheckCircle2 className="size-5" /> : step}
         </button>
-        <div className="flex-1 space-y-3">
-          <h3 className="font-sans text-xl font-semibold">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
-          
+        <div className="min-w-0 flex-1 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="font-sans text-lg font-semibold sm:text-xl">{title}</h3>
+            {/* Decorative icon — hidden on phones to give text room */}
+            <div
+              className="hidden size-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent/10 to-accent/5 text-accent sm:flex"
+              aria-hidden
+            >
+              <Icon className="size-6" strokeWidth={1.5} />
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground sm:text-base">{description}</p>
+
           {tips.length > 0 && (
             <div className="space-y-2 pt-2">
-              <p className="text-sm font-medium text-primary">Tips:</p>
+              <p className="text-sm font-medium text-accent">Tips:</p>
               <ul className="space-y-1">
                 {tips.map((tip, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <ChevronRight className="size-4 shrink-0 mt-0.5 text-primary" />
+                    <ChevronRight className="mt-0.5 size-4 shrink-0 text-accent" />
                     {tip}
                   </li>
                 ))}
               </ul>
             </div>
           )}
-        </div>
-        
-        <div
-          className="flex size-14 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/30 text-primary sm:size-[4.5rem]"
-          aria-hidden
-        >
-          <Icon className="size-7 sm:size-8" strokeWidth={1.5} />
         </div>
       </div>
     </div>

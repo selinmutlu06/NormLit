@@ -24,7 +24,9 @@ const SUGGESTIONS = [
 export default function ChatPage() {
   const [input, setInput] = useState("")
   const [selectedPaperIds, setSelectedPaperIds] = useState<string[]>([])
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  // Closed by default so mobile lands on the chat, not the papers drawer.
+  // Opened on desktop after mount (where the sidebar is a docked panel).
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [chatModel, setChatModel] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -54,6 +56,12 @@ export default function ChatPage() {
   })
 
   const isLoading = status === "streaming" || status === "submitted"
+
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      setSidebarOpen(true)
+    }
+  }, [])
 
   useEffect(() => {
     fetch("/api/config")
@@ -135,8 +143,10 @@ export default function ChatPage() {
           </div>
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-2">
-              <BookOpen className="size-5 text-primary" />
-              <span className="font-sans text-lg font-semibold">NormLit</span>
+              <span className="flex size-6 items-center justify-center rounded-md bg-gradient-to-br from-primary to-accent">
+                <BookOpen className="size-3.5 text-primary-foreground" />
+              </span>
+              <span className="font-sans text-lg font-semibold tracking-tight">NormLit</span>
             </div>
             {chatModel && (
               <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
@@ -171,10 +181,11 @@ export default function ChatPage() {
           <div className="mx-auto max-w-3xl px-4 py-8">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10">
-                  <BookOpen className="size-8 text-primary" />
+                <div className="relative flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg">
+                  <span className="absolute inset-0 rounded-2xl bg-accent/30 blur-xl" aria-hidden />
+                  <BookOpen className="relative size-8 text-primary-foreground" />
                 </div>
-                <h2 className="mt-6 font-sans text-2xl font-semibold text-foreground">
+                <h2 className="mt-6 font-sans text-2xl font-semibold tracking-tight text-foreground">
                   Research chat
                 </h2>
                 <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -206,9 +217,18 @@ export default function ChatPage() {
                   <ChatMessage key={message.id} message={message} />
                 ))}
                 {isLoading && (
-                  <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-4 py-3 text-muted-foreground">
-                    <Loader2 className="size-4 animate-spin" />
-                    <span className="text-sm">Searching papers and drafting answer…</span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent shadow-sm">
+                      <Sparkles className="size-4 text-primary-foreground" />
+                    </div>
+                    <div className="flex items-center gap-2.5 rounded-2xl rounded-tl-sm border border-border bg-card px-4 py-3.5 text-muted-foreground shadow-sm">
+                      <span className="flex gap-1">
+                        <span className="thinking-dot size-1.5 rounded-full bg-accent" style={{ animationDelay: "0ms" }} />
+                        <span className="thinking-dot size-1.5 rounded-full bg-accent" style={{ animationDelay: "150ms" }} />
+                        <span className="thinking-dot size-1.5 rounded-full bg-accent" style={{ animationDelay: "300ms" }} />
+                      </span>
+                      <span className="text-sm">Searching papers and drafting answer…</span>
+                    </div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />

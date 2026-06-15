@@ -1,7 +1,7 @@
 "use client"
 
 import { UIMessage } from "ai"
-import { User, Bot } from "lucide-react"
+import { User, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ChatMessageProps {
@@ -18,37 +18,27 @@ export function ChatMessage({ message }: ChatMessageProps) {
     .join("")
 
   return (
-    <div
-      className={cn(
-        "flex gap-4",
-        isUser ? "flex-row-reverse" : "flex-row"
-      )}
-    >
+    <div className={cn("flex gap-3.5", isUser ? "flex-row-reverse" : "flex-row")}>
       <div
         className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-full",
+          "flex size-8 shrink-0 items-center justify-center rounded-full shadow-sm",
           isUser
             ? "bg-primary text-primary-foreground"
-            : "bg-muted text-muted-foreground"
+            : "bg-gradient-to-br from-primary to-accent text-primary-foreground",
         )}
       >
-        {isUser ? <User className="size-4" /> : <Bot className="size-4" />}
+        {isUser ? <User className="size-4" /> : <Sparkles className="size-4" />}
       </div>
-      <div
-        className={cn(
-          "flex-1 space-y-2 overflow-hidden",
-          isUser ? "text-right" : "text-left"
-        )}
-      >
+      <div className={cn("flex-1 space-y-2 overflow-hidden", isUser ? "text-right" : "text-left")}>
         <div
           className={cn(
-            "inline-block max-w-full rounded-2xl px-4 py-3 shadow-sm",
+            "inline-block max-w-full rounded-2xl px-4 py-3 text-left shadow-sm",
             isUser
-              ? "bg-primary text-primary-foreground"
-              : "border border-border bg-card text-foreground"
+              ? "rounded-tr-sm bg-primary text-primary-foreground"
+              : "rounded-tl-sm border bg-card text-foreground",
           )}
         >
-          <div className="prose prose-sm dark:prose-invert max-w-none">
+          <div className="prose prose-sm max-w-none dark:prose-invert">
             <MessageContent content={textContent || ""} />
           </div>
         </div>
@@ -58,48 +48,76 @@ export function ChatMessage({ message }: ChatMessageProps) {
 }
 
 function MessageContent({ content }: { content: string }) {
-  // Simple markdown-like rendering for citations and paragraphs
-  const paragraphs = content.split("\n\n").filter(Boolean)
+  const blocks = content.split("\n\n").filter(Boolean)
 
   return (
     <>
-      {paragraphs.map((paragraph, index) => (
-        <p key={index} className="mb-2 last:mb-0 whitespace-pre-wrap">
-          {renderWithCitations(paragraph)}
-        </p>
-      ))}
+      {blocks.map((block, index) => {
+        const lines = block.split("\n")
+        const isBulletList = lines.every((l) => /^\s*[-*]\s+/.test(l))
+        const isNumberList = lines.every((l) => /^\s*\d+\.\s+/.test(l))
+
+        if (isBulletList) {
+          return (
+            <ul key={index} className="my-2 list-disc space-y-1 pl-5 last:mb-0">
+              {lines.map((l, i) => (
+                <li key={i}>{renderInline(l.replace(/^\s*[-*]\s+/, ""))}</li>
+              ))}
+            </ul>
+          )
+        }
+        if (isNumberList) {
+          return (
+            <ol key={index} className="my-2 list-decimal space-y-1 pl-5 last:mb-0">
+              {lines.map((l, i) => (
+                <li key={i}>{renderInline(l.replace(/^\s*\d+\.\s+/, ""))}</li>
+              ))}
+            </ol>
+          )
+        }
+        return (
+          <p key={index} className="mb-2 whitespace-pre-wrap last:mb-0">
+            {renderInline(block)}
+          </p>
+        )
+      })}
     </>
   )
 }
 
-function renderWithCitations(text: string): React.ReactNode[] {
-  // Match citations like [Author, Year] or [Author et al., Year]
-  const citationRegex = /\[([^\]]+,\s*\d{4})\]/g
-  const parts: React.ReactNode[] = []
-  let lastIndex = 0
-  let match
+/**
+ * Inline renderer for **bold**, `code`, and [Author, Year] citations.
+ * Tokenizes on the union of the three patterns so they compose safely.
+ */
+function renderInline(text: string): React.ReactNode[] {
+  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+,\s*\d{4}\])/g
+  const segments = text.split(pattern).filter((s) => s !== "")
 
-  while ((match = citationRegex.exec(text)) !== null) {
-    // Add text before the citation
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index))
+  return segments.map((seg, i) => {
+    if (/^\*\*[^*]+\*\*$/.test(seg)) {
+      return (
+        <strong key={i} className="font-semibold">
+          {seg.slice(2, -2)}
+        </strong>
+      )
     }
-    // Add the citation with special styling
-    parts.push(
-      <span
-        key={match.index}
-        className="rounded bg-accent px-1.5 py-0.5 font-medium text-accent-foreground"
-      >
-        [{match[1]}]
-      </span>
-    )
-    lastIndex = match.index + match[0].length
-  }
-
-  // Add remaining text
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex))
-  }
-
-  return parts.length > 0 ? parts : [text]
+    if (/^`[^`]+`$/.test(seg)) {
+      return (
+        <code key={i} className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.85em]">
+          {seg.slice(1, -1)}
+        </code>
+      )
+    }
+    if (/^\[[^\]]+,\s*\d{4}\]$/.test(seg)) {
+      return (
+        <span
+          key={i}
+          className="mx-0.5 inline-flex items-center rounded-md bg-accent/15 px-1.5 py-0.5 align-baseline text-[0.8em] font-medium text-accent ring-1 ring-inset ring-accent/25"
+        >
+          {seg.slice(1, -1)}
+        </span>
+      )
+    }
+    return <span key={i}>{seg}</span>
+  })
 }

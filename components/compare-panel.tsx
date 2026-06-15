@@ -135,7 +135,7 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
         <DialogHeader>
           <DialogTitle className="font-sans">Compare Papers</DialogTitle>
           <DialogDescription>
-            Analyze {selectedPaperIds.length} selected papers with Claude Opus 4.7.
+            Analyze {selectedPaperIds.length} selected papers with Claude Opus 4.8.
           </DialogDescription>
         </DialogHeader>
 
@@ -253,10 +253,10 @@ function ComparisonTypeButton({
     <button
       type="button"
       onClick={() => onSelect(type)}
-      className={`rounded-lg border p-3 text-left transition-colors ${
+      className={`rounded-xl border p-3 text-left transition-all duration-200 ${
         isSelected
-          ? "border-primary bg-primary/5"
-          : "border-border hover:bg-muted"
+          ? "border-accent/50 bg-accent/5 shadow-sm ring-1 ring-accent/20"
+          : "border-border hover:-translate-y-0.5 hover:border-accent/30 hover:bg-muted/60 hover:shadow-sm"
       }`}
     >
       <h4 className="text-sm font-medium text-foreground">{title}</h4>
