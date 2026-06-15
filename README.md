@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Supabase-pgvector-3FCF8E?logo=supabase&logoColor=white" alt="Supabase" />
   <img src="https://img.shields.io/badge/RAG-Vector_Embeddings-8B5CF6" alt="RAG" />
-  <img src="https://img.shields.io/badge/Claude-Opus_4.7-D97706" alt="Claude" />
+  <img src="https://img.shields.io/badge/Claude-Opus_4.8-D97706" alt="Claude" />
 </p>
 
 ---
@@ -114,7 +114,7 @@ flowchart LR
 | **Ingest** | PDFs are chunked and embedded with OpenAI `text-embedding-3-small` |
 | **Store** | Vectors live in Supabase PostgreSQL via `pgvector` |
 | **Retrieve** | Your question is embedded and matched with cosine similarity |
-| **Answer** | Claude Opus 4.7 synthesizes a response with paper citations |
+| **Answer** | Claude Opus 4.8 synthesizes a response with paper citations |
 
 ---
 
@@ -125,7 +125,7 @@ flowchart LR
 | **Frontend** | Next.js 16, React, Tailwind CSS, shadcn/ui |
 | **Backend** | Next.js API Routes, Vercel AI SDK 6 |
 | **Database** | Supabase (PostgreSQL + pgvector) |
-| **AI** | Claude Opus 4.7 (chat), OpenAI embeddings (search) |
+| **AI** | Claude Opus 4.8 (chat), OpenAI embeddings (search) |
 | **Deploy** | Vercel |
 
 ---

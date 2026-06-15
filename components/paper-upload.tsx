@@ -118,11 +118,11 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
         onDrop={onDrop}
         onClick={() => !isUploading && inputRef.current?.click()}
         className={cn(
-          "cursor-pointer rounded-lg border-2 border-dashed transition-colors",
+          "cursor-pointer rounded-xl border-2 border-dashed transition-all duration-200",
           compact ? "p-3" : "p-5",
           isDragging
-            ? "border-primary bg-primary/5"
-            : "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50",
+            ? "scale-[1.02] border-accent bg-accent/10 shadow-md ring-2 ring-accent/20"
+            : "border-border bg-muted/30 hover:border-accent/50 hover:bg-muted/50",
           isUploading && "pointer-events-none opacity-70",
         )}
       >
@@ -142,9 +142,14 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
 
         <div className="flex flex-col items-center text-center">
           {isUploading ? (
-            <Loader2 className="size-8 animate-spin text-primary" />
+            <Loader2 className="size-8 animate-spin text-accent" />
           ) : (
-            <Upload className="size-8 text-muted-foreground" />
+            <Upload
+              className={cn(
+                "size-8 transition-colors",
+                isDragging ? "text-accent" : "text-muted-foreground",
+              )}
+            />
           )}
           <p className={cn("mt-2 font-medium text-foreground", compact && "text-sm")}>
             {isUploading ? "Processing PDFs…" : "Drop PDFs here"}
@@ -200,7 +205,7 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
       {!compact && (
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <FileText className="size-3" />
-          <span>Embeddings use OpenAI; chat uses Claude Opus 4.7 when configured.</span>
+          <span>Embeddings use OpenAI; chat uses Claude Opus 4.8 when configured.</span>
         </div>
       )}
     </div>
