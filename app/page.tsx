@@ -62,14 +62,7 @@ export default function LandingPage() {
           <div className="relative mx-auto max-w-6xl px-6 py-24 lg:py-32">
             <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
               <Reveal>
-                <div className="inline-flex items-center gap-2 rounded-full border bg-card/70 px-3 py-1 text-sm text-muted-foreground backdrop-blur-sm">
-                  <span className="relative flex size-2">
-                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" />
-                    <span className="relative inline-flex size-2 rounded-full bg-accent" />
-                  </span>
-                  <span>Built for cognitive neuroscience</span>
-                </div>
-                <h1 className="mt-6 text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
+                <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
                   Research literature,
                   <br />
                   <span className="text-gradient">answered with citations</span>
