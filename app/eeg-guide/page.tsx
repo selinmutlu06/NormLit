@@ -436,7 +436,7 @@ export default function EEGGuidePage() {
                   <CardContent className="space-y-6">
                     <div className="rounded-xl border border-border bg-muted/20 p-4 sm:p-6">
                       <p className="mb-4 text-center text-sm text-muted-foreground">
-                        10-20 system — click an electrode for placement notes. Align <span className="font-mono font-medium text-foreground">Cz</span> at the vertex.
+                        10-20 system. Click an electrode for placement notes, and align <span className="font-mono font-medium text-foreground">Cz</span> at the vertex.
                       </p>
                       <ElectrodeMap variant="guide" />
                     </div>

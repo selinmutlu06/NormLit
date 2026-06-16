@@ -19,19 +19,6 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { EEGWaveform, BrainTopoMap, InlineWaveform } from "@/components/eeg-waveform"
 import { Reveal } from "@/components/reveal"
 
-const MARQUEE_TERMS = [
-  "N400 ERP",
-  "Social norm violation",
-  "BioSemi ActiveTwo",
-  "10-20 montage",
-  "pgvector retrieval",
-  "Cosine similarity",
-  "Vector embeddings",
-  "Inline citations",
-  "Event-related potentials",
-  "Semantic search",
-]
-
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
@@ -90,7 +77,7 @@ export default function LandingPage() {
                 </h1>
                 <p className="mt-6 max-w-lg text-pretty text-lg leading-relaxed text-muted-foreground">
                   Ask questions across your paper library, compare findings between EEG studies,
-                  and get answers grounded in the literature — every claim traceable to its source.
+                  and get answers grounded in the literature, with every claim traceable to its source.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="glow-accent">
@@ -141,23 +128,6 @@ export default function LandingPage() {
                   </div>
                 </div>
               </Reveal>
-            </div>
-          </div>
-
-          {/* Keyword marquee */}
-          <div className="relative border-t bg-card/40 py-3 backdrop-blur-sm">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-background to-transparent" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent" />
-            <div className="flex w-max animate-marquee gap-8">
-              {[...MARQUEE_TERMS, ...MARQUEE_TERMS].map((term, i) => (
-                <span
-                  key={`${term}-${i}`}
-                  className="flex items-center gap-2 whitespace-nowrap font-mono text-xs uppercase tracking-wider text-muted-foreground"
-                >
-                  <span className="size-1 rounded-full bg-accent" />
-                  {term}
-                </span>
-              ))}
             </div>
           </div>
         </section>
@@ -327,11 +297,7 @@ export default function LandingPage() {
               </Reveal>
 
               <Reveal delay={120} className="order-1 lg:order-2">
-                <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm text-accent">
-                  <Zap className="size-3.5" />
-                  <span>Built for the lab</span>
-                </div>
-                <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                   Complete EEG study guide
                 </h2>
                 <p className="mt-4 text-muted-foreground">

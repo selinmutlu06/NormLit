@@ -27,8 +27,11 @@ function generateWaveformData(length: number, complexity: number = 3): number[] 
     frequencies.forEach(({ freq, amp }) => {
       value += Math.sin((i / length) * Math.PI * 2 * freq * 10) * amp
     })
-    // Add some noise for realism
-    value += (Math.random() - 0.5) * 0.1
+    // Deterministic, seeded noise for realism. Stable across SSR and client so
+    // the rendered path matches and React doesn't flag a hydration mismatch.
+    const seeded = Math.sin(i * 12.9898 + 78.233) * 43758.5453
+    const noise = seeded - Math.floor(seeded)
+    value += (noise - 0.5) * 0.1
     data.push(value)
   }
   return data
