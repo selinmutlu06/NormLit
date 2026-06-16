@@ -15,7 +15,7 @@ const sourceSerif = Source_Serif_4({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://v0-normlit-research-assistant.vercel.app'),
-  title: 'NormLit - Research Literature Assistant',
+  title: 'NormLit',
   description: 'AI-powered research assistant for cognitive neuroscience labs. Chat with your papers, compare findings, and accelerate your research.',
   generator: 'v0.app',
   openGraph: {

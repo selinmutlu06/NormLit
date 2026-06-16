@@ -3,6 +3,7 @@ import { ImageResponse } from 'next/og'
 export const size = { width: 32, height: 32 }
 export const contentType = 'image/png'
 
+// lucide "Brain" outline — rendered stroked (not filled) so it reads as a brain.
 const BRAIN_PATHS = [
   'M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z',
   'M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z',
@@ -18,14 +19,19 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#1e3a5f',
+          borderRadius: 7,
+          background: 'linear-gradient(135deg, #1e3a5f 0%, #14b8a6 100%)',
         }}
       >
         <svg
-          width="22"
-          height="22"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
-          fill="#ffffff"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
           xmlns="http://www.w3.org/2000/svg"
         >
           {BRAIN_PATHS.map((d) => (
