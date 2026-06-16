@@ -12,7 +12,6 @@ import {
   Database,
   Zap,
   Sparkles,
-  Quote,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -332,22 +331,6 @@ export default function LandingPage() {
                 </div>
               </Reveal>
             </div>
-          </div>
-        </section>
-
-        {/* Origin story */}
-        <section className="border-b">
-          <div className="mx-auto max-w-3xl px-6 py-20 text-center lg:py-24">
-            <Reveal>
-              <Quote className="mx-auto size-8 text-accent/60" />
-              <blockquote className="mt-6 text-balance text-xl font-medium leading-relaxed text-foreground md:text-2xl">
-                Watching my team burn hours manually cross-referencing literature and parsing a
-                100-page EEG packet, I wanted to build something that made that grind disappear.
-              </blockquote>
-              <p className="mt-6 font-mono text-sm text-muted-foreground">
-                Built during Duke&apos;s Cognitive Neuroscience Research Internship
-              </p>
-            </Reveal>
           </div>
         </section>
 
