@@ -9,17 +9,15 @@ export const media = {
     alt: 'International 10-20 EEG electrode placement diagram (modified combinatorial nomenclature)',
     credit: 'Wikimedia Commons: International 10-20 system for EEG-MCN',
   },
-  /** Wikimedia Commons — EEG Recording Cap.jpg (CC BY-SA) */
+  /**
+   * Wikimedia Commons — EEG Recording Cap.jpg (CC BY-SA).
+   * NOTE: this is a passive ring-electrode cap, not a BioSemi ActiveTwo.
+   * It illustrates holder/gel geometry only — captions must not imply BioSemi hardware.
+   */
   eegRecordingCap: {
     src: '/images/eeg-recording-cap.jpg',
-    alt: 'EEG recording cap with electrodes placed on the scalp',
-    credit: 'Wikimedia Commons: EEG Recording Cap',
-  },
-  /** Wikimedia Commons — U.S. Navy BUMED, public domain */
-  eegClinicalSetup: {
-    src: '/images/eeg-clinical-setup.jpg',
-    alt: 'Clinician operating an EEG machine during a recording session',
-    credit: 'Wikimedia Commons: U.S. Navy BUMED Library and Archives',
+    alt: 'Gel-based EEG cap with ring electrodes seated in holders on the scalp',
+    credit: 'Wikimedia Commons: EEG Recording Cap (CC BY-SA)',
   },
 } as const
 
