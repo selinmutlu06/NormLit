@@ -46,6 +46,7 @@ import { ElectrodeMap } from "@/components/electrode-map"
 import { ElectrodePositionCalculator } from "@/components/electrode-position-calculator"
 import { EogDiagram } from "@/components/eog-diagram"
 import { ArtifactTrainer } from "@/components/artifact-trainer"
+import { LandmarksDiagram } from "@/components/landmarks-diagram"
 
 const sections = [
   { id: "overview", title: "Overview", icon: Info },
@@ -439,11 +440,17 @@ export default function EEGGuidePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <GuideReferencePanel
-                      title="Reference: 10-20 electrode positions"
-                      description="Landmarks (nasion, inion, preauricular points) align the cap to this standard layout."
-                      mediaKey="eeg1020"
-                    />
+                    <div className="rounded-xl border border-border bg-muted/20 p-4 sm:p-5">
+                      <p className="text-sm font-medium">Reference: cranial landmarks</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        The nasion, inion, and the two preauricular points anchor the cap. The
+                        dashed lines are the nasion-inion and ear-to-ear measurement lines; they
+                        cross at the vertex (Cz).
+                      </p>
+                      <div className="mt-4 flex justify-center">
+                        <LandmarksDiagram />
+                      </div>
+                    </div>
 
                     <StepCard
                       step={1}

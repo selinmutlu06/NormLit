@@ -3,12 +3,6 @@
  */
 
 export const media = {
-  /** Wikimedia Commons — International 10-20 system (MCN), public domain */
-  eeg1020: {
-    src: '/images/eeg-10-20-system.png',
-    alt: 'International 10-20 EEG electrode placement diagram (modified combinatorial nomenclature)',
-    credit: 'Wikimedia Commons: International 10-20 system for EEG-MCN',
-  },
   /**
    * Wikimedia Commons — EEG Recording Cap.jpg (CC BY-SA).
    * NOTE: this is a passive ring-electrode cap, not a BioSemi ActiveTwo.
