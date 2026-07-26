@@ -522,6 +522,16 @@ export default function EEGGuidePage() {
                       <ElectrodeMap variant="guide" />
                     </div>
 
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent/30 bg-accent/5 p-4">
+                      <p className="text-sm text-muted-foreground">
+                        Need exact centimeter marks for this participant&apos;s head?
+                      </p>
+                      <Button variant="outline" size="sm" className="gap-2" onClick={() => setActiveSection("positions")}>
+                        <Calculator className="size-4" />
+                        Open the Position Finder
+                      </Button>
+                    </div>
+
                     <GuideReferencePanel
                       title="Reference: EEG recording cap"
                       description="Electrodes sit in holders on the cap; hair is parted and gel applied at each site."
