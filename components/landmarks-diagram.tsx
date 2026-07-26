@@ -1,16 +1,15 @@
 import { cn } from "@/lib/utils"
+import { LANDMARKS } from "@/lib/landmarks"
 
 /**
  * Top-down schematic of the four cranial landmarks used to place the cap:
  * nasion (front), inion (back), left/right preauricular points (sides), and
  * the vertex (Cz) where the two measurement lines cross. Matches the top-down,
  * nose-up orientation of the electrode map. Purely presentational; theme-aware.
+ * Dot positions come from lib/landmarks so the lesson stays in sync.
  */
 export function LandmarksDiagram({ className }: { className?: string }) {
   const accent = "var(--accent)"
-  const dot = (cx: number, cy: number, r = 5.5) => (
-    <circle cx={cx} cy={cy} r={r} fill={accent} stroke="var(--background)" strokeWidth="1.5" />
-  )
   return (
     <svg
       viewBox="0 0 240 250"
@@ -37,11 +36,10 @@ export function LandmarksDiagram({ className }: { className?: string }) {
       <line x1="120" y1="39" x2="120" y2="215" stroke="var(--foreground)" strokeWidth="1.25" strokeDasharray="4 4" opacity="0.4" />
       <line x1="32" y1="127" x2="208" y2="127" stroke="var(--foreground)" strokeWidth="1.25" strokeDasharray="4 4" opacity="0.4" />
 
-      {/* Landmark dots */}
-      {dot(120, 39)}
-      {dot(120, 215)}
-      {dot(32, 127)}
-      {dot(208, 127)}
+      {/* Landmark dots (positions shared with the lesson) */}
+      {LANDMARKS.filter((l) => l.id !== "vertex").map((l) => (
+        <circle key={l.id} cx={l.cx} cy={l.cy} r="5.5" fill={accent} stroke="var(--background)" strokeWidth="1.5" />
+      ))}
       {/* Vertex (Cz) — emphasized */}
       <circle cx="120" cy="127" r="7.5" fill={accent} stroke="var(--background)" strokeWidth="2" />
       <circle cx="120" cy="127" r="12" fill="none" stroke={accent} strokeWidth="1.25" opacity="0.5" />

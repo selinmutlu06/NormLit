@@ -47,6 +47,7 @@ import { ElectrodePositionCalculator } from "@/components/electrode-position-cal
 import { EogDiagram } from "@/components/eog-diagram"
 import { ArtifactTrainer } from "@/components/artifact-trainer"
 import { LandmarksDiagram } from "@/components/landmarks-diagram"
+import { LandmarkLesson } from "@/components/landmark-lesson"
 
 const sections = [
   { id: "overview", title: "Overview", icon: Info },
@@ -491,6 +492,19 @@ export default function EEGGuidePage() {
                       onToggle={() => toggleStep("prep-4")}
                       icon={Sparkles}
                     />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-sans text-2xl">Landmark Lesson</CardTitle>
+                    <CardDescription>
+                      Learn the four landmarks by doing. Tap the right spot or name the highlighted
+                      point, with instant feedback.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <LandmarkLesson />
                   </CardContent>
                 </Card>
               </TabsContent>
