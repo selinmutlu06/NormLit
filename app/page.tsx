@@ -45,6 +45,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { ElectrodeMap } from "@/components/electrode-map"
 import { ElectrodePositionCalculator } from "@/components/electrode-position-calculator"
 import { EogDiagram } from "@/components/eog-diagram"
+import { ArtifactTrainer } from "@/components/artifact-trainer"
 
 const sections = [
   { id: "overview", title: "Overview", icon: Info },
@@ -978,6 +979,19 @@ export default function EEGGuidePage() {
                         </div>
                       </CardContent>
                     </Card>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-sans text-2xl">Spot the Artifact</CardTitle>
+                    <CardDescription>
+                      Practice reading traces the way you will during a live recording. Identify
+                      each one, then check your answer.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ArtifactTrainer />
                   </CardContent>
                 </Card>
               </TabsContent>
