@@ -58,7 +58,7 @@ export function ERPFigure({ className }: { className?: string }) {
         height={H - PAD.top - PAD.bottom}
         className="fill-foreground/[0.05]"
       />
-      <text x={(x(300) + x(500)) / 2} y={H - PAD.bottom - 8} textAnchor="middle" className="fill-muted-foreground font-mono text-[10px]">
+      <text x={(x(300) + x(500)) / 2} y={H - PAD.bottom - 8} textAnchor="middle" className="fill-muted-foreground font-sans text-[10px]">
         N400 window
       </text>
 
@@ -68,23 +68,23 @@ export function ERPFigure({ className }: { className?: string }) {
       {[0, 200, 400, 600, 800].map((t) => (
         <g key={t}>
           <line x1={x(t)} x2={x(t)} y1={zeroY} y2={zeroY + 4} className="stroke-foreground/40" />
-          <text x={x(t)} y={H - PAD.bottom + 18} textAnchor="middle" className="fill-muted-foreground font-mono text-[10px]">
+          <text x={x(t)} y={H - PAD.bottom + 18} textAnchor="middle" className="fill-muted-foreground font-sans text-[10px]">
             {t}
           </text>
         </g>
       ))}
-      <text x={W - PAD.right} y={H - 6} textAnchor="end" className="fill-muted-foreground font-mono text-[10px]">
+      <text x={W - PAD.right} y={H - 6} textAnchor="end" className="fill-muted-foreground font-sans text-[10px]">
         ms
       </text>
       {[-5, 5].map((v) => (
         <g key={v}>
           <line x1={x(0) - 4} x2={x(0)} y1={y(v)} y2={y(v)} className="stroke-foreground/40" />
-          <text x={x(0) - 8} y={y(v) + 3} textAnchor="end" className="fill-muted-foreground font-mono text-[10px]">
+          <text x={x(0) - 8} y={y(v) + 3} textAnchor="end" className="fill-muted-foreground font-sans text-[10px]">
             {v > 0 ? `+${v}` : `−${-v}`}
           </text>
         </g>
       ))}
-      <text x={PAD.left - 30} y={PAD.top + 4} className="fill-muted-foreground font-mono text-[10px]">
+      <text x={PAD.left - 30} y={PAD.top + 4} className="fill-muted-foreground font-sans text-[10px]">
         µV
       </text>
 
@@ -99,7 +99,7 @@ export function ERPFigure({ className }: { className?: string }) {
       <text x={x(400)} y={y(1.8)} textAnchor="middle" className="fill-foreground font-sans text-[11px]">
         norm-consistent
       </text>
-      <text x={PAD.left + 4} y={H - PAD.bottom - 8} className="fill-muted-foreground font-mono text-[10px]">
+      <text x={PAD.left + 4} y={H - PAD.bottom - 8} className="fill-muted-foreground font-sans text-[10px]">
         Cz
       </text>
     </svg>

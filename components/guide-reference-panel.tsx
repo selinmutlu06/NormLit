@@ -9,7 +9,7 @@ interface GuideReferencePanelProps {
   className?: string
 }
 
-/** Shared layout for diagrams and photos — kept separate from step cards so steps stay icon-only. */
+/** Shared layout for diagrams and photos, kept separate from step cards so steps stay icon-only. */
 export function GuideReferencePanel({
   title,
   description,

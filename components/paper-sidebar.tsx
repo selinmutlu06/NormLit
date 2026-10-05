@@ -67,10 +67,10 @@ export function PaperSidebar({
         {/* Header */}
         <div className="flex h-14 items-center justify-between border-b border-border px-4">
           <div className="flex items-baseline gap-2">
-            <h2 className="font-serif text-xl tracking-tight">Library</h2>
+            <h2 className="text-base font-semibold">Papers</h2>
             {!isLoading && papers.length > 0 && (
-              <span className="font-mono text-xs text-muted-foreground">
-                {papers.length} {papers.length === 1 ? "paper" : "papers"}
+              <span className="text-xs text-muted-foreground">
+                {papers.length}
               </span>
             )}
           </div>
@@ -93,7 +93,7 @@ export function PaperSidebar({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search title or author"
+              placeholder="Search papers"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -102,7 +102,7 @@ export function PaperSidebar({
 
           {/* Year filter */}
           {years.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs">
+            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs">
               <YearTab active={yearFilter === null} onClick={() => setYearFilter(null)}>
                 All
               </YearTab>
@@ -134,7 +134,7 @@ export function PaperSidebar({
               </div>
             ) : filteredPapers.length === 0 ? (
               <div className="px-4 py-10">
-                <p className="font-serif text-lg text-foreground">
+                <p className="text-sm font-medium text-foreground">
                   {papers.length === 0 ? "No papers yet" : "No matches"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -161,9 +161,9 @@ export function PaperSidebar({
         {/* Selection summary */}
         {selectedPaperIds.length > 0 && (
           <div className="flex items-baseline gap-2 border-t border-border px-4 py-3 text-sm">
-            <span className="font-mono text-accent">{selectedPaperIds.length}</span>
+            <span className="text-accent">{selectedPaperIds.length}</span>
             <p className="text-muted-foreground">
-              paper{selectedPaperIds.length !== 1 ? "s" : ""} in focus
+              paper{selectedPaperIds.length !== 1 ? "s" : ""} selected
             </p>
           </div>
         )}
@@ -174,7 +174,7 @@ export function PaperSidebar({
         variant="ghost"
         size="icon"
         className="absolute left-80 top-2.5 z-50 ml-1 hidden md:flex"
-        aria-label={isOpen ? "Hide library" : "Show library"}
+        aria-label={isOpen ? "Hide papers" : "Show papers"}
         onClick={onToggle}
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(-320px)",
@@ -221,12 +221,12 @@ function PaperCard({
           {isSelected && <Check className="size-2.5" strokeWidth={3} />}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-2 font-serif text-[15px] leading-snug text-foreground">
+          <h3 className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
             {paper.title}
           </h3>
           <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
             {paper.authors}
-            {paper.year ? <span className="font-mono"> · {paper.year}</span> : null}
+            {paper.year ? <span> · {paper.year}</span> : null}
           </p>
         </div>
       </div>

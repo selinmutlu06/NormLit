@@ -18,15 +18,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
   if (isUser) {
     return (
       <div className="border-t pb-3 pt-8 first:border-t-0 first:pt-0">
-        <p className="font-mono text-xs text-muted-foreground">You asked</p>
-        <p className="mt-1.5 whitespace-pre-wrap font-serif text-2xl leading-snug tracking-tight">{textContent}</p>
+        <p className="whitespace-pre-wrap text-lg font-medium leading-snug">{textContent}</p>
       </div>
     )
   }
 
   return (
     <div className="pb-8 pt-3 text-[15px] leading-relaxed">
-      <p className="mb-2 font-mono text-xs text-muted-foreground">NormLit</p>
       <MessageContent content={textContent || ""} />
     </div>
   )

@@ -182,7 +182,7 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
                 <p className="truncate font-medium text-foreground">{result.filename}</p>
                 {result.paperId ? (
                   <p className="text-muted-foreground">
-                    {result.title} · {result.chunkCount} chunks indexed
+                    {result.title} · added
                   </p>
                 ) : (
                   <p className="text-destructive">{result.error}</p>
@@ -205,7 +205,7 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
       {!compact && (
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <FileText className="size-3" />
-          <span>Embeddings use OpenAI; answers use Claude when configured.</span>
+          <span>Uses OpenAI for search and Claude for answers.</span>
         </div>
       )}
     </div>

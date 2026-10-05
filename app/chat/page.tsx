@@ -142,7 +142,7 @@ export default function ChatPage() {
               <Wordmark className="text-xl" />
             </Link>
             {chatModel && (
-              <span className="hidden truncate font-mono text-xs text-muted-foreground sm:inline">{chatModel}</span>
+              <span className="hidden truncate text-xs text-muted-foreground sm:inline">{chatModel}</span>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export default function ChatPage() {
               href="/eeg-guide"
               className="hidden px-2 text-sm text-muted-foreground hover:text-foreground lg:inline"
             >
-              EEG protocol
+              EEG guide
             </Link>
             <ThemeToggle />
           </div>
@@ -177,19 +177,18 @@ export default function ChatPage() {
           <div className="mx-auto max-w-3xl px-5 py-8">
             {messages.length === 0 ? (
               <div className="pt-10 sm:pt-16">
-                <h1 className="font-serif text-4xl font-normal tracking-tight sm:text-5xl">Ask the library.</h1>
+                <h1 className="font-serif text-4xl font-normal tracking-tight sm:text-5xl">Ask a question</h1>
                 <p className="mt-4 max-w-lg leading-relaxed text-muted-foreground">
-                  Upload PDFs in the panel on the left, then ask a question. Answers come only from your papers,
-                  with author and year cited inline.
+                  Upload PDFs on the left, then ask anything about them. Each answer cites the paper it came from.
                   {papers.length === 0 && !papersLoading && (
                     <>
                       {" "}
-                      <span className="text-foreground">Start by dropping in a PDF.</span>
+                      <span className="text-foreground">Start by adding a PDF.</span>
                     </>
                   )}
                 </p>
                 <div className="mt-12">
-                  <p className="font-mono text-xs text-muted-foreground">Try asking</p>
+                  <p className="text-sm text-muted-foreground">Try asking</p>
                   <ul className="mt-3 border-t">
                     {SUGGESTIONS.map((suggestion) => (
                       <li key={suggestion} className="border-b">
@@ -199,7 +198,7 @@ export default function ChatPage() {
                           disabled={isLoading}
                           className="group flex w-full items-baseline justify-between gap-4 py-3.5 text-left transition-colors hover:text-accent disabled:opacity-50"
                         >
-                          <span className="font-serif text-lg">{suggestion}</span>
+                          <span>{suggestion}</span>
                           <span className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-accent">
                             &rarr;
                           </span>
@@ -216,7 +215,7 @@ export default function ChatPage() {
                 ))}
                 {isLoading && status === "submitted" && (
                   <div className="py-6 text-sm text-muted-foreground">
-                    Searching papers and drafting an answer <span className="caret" aria-hidden />
+                    Searching your papers…
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -235,8 +234,8 @@ export default function ChatPage() {
                 onKeyDown={handleKeyDown}
                 placeholder={
                   papers.length === 0
-                    ? "Upload papers first, then ask a question…"
-                    : "Ask about your papers…"
+                    ? "Add a PDF first, then ask a question"
+                    : "Ask about your papers"
                 }
                 className="min-h-[44px] max-h-[200px] flex-1 resize-none border-0 bg-transparent shadow-none focus-visible:ring-0"
                 disabled={isLoading}
@@ -257,8 +256,8 @@ export default function ChatPage() {
               </Button>
             </div>
             {selectedPaperIds.length > 0 && (
-              <p className="mt-2 font-mono text-xs text-muted-foreground">
-                Focused on {selectedPaperIds.length} selected paper
+              <p className="mt-2 text-xs text-muted-foreground">
+                Only searching {selectedPaperIds.length} selected paper
                 {selectedPaperIds.length !== 1 ? "s" : ""}
               </p>
             )}

@@ -4,16 +4,14 @@ import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Wordmark({ className }: { className?: string }) {
   return (
-    <span className={cn("font-serif text-[1.4rem] font-medium leading-none tracking-tight", className)}>
-      Norm<span className="italic text-accent">Lit</span>
-    </span>
+    <span className={cn("text-lg font-semibold leading-none tracking-tight", className)}>NormLit</span>
   )
 }
 
 const NAV = [
   { href: "/#features", label: "Features" },
-  { href: "/#method", label: "Method" },
-  { href: "/eeg-guide", label: "EEG protocol" },
+  { href: "/#how", label: "How it works" },
+  { href: "/eeg-guide", label: "EEG guide" },
 ]
 
 export function SiteHeader({ trail }: { trail?: string }) {
@@ -61,12 +59,11 @@ export function SiteFooter() {
     <footer className="border-t">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-10 text-sm text-muted-foreground sm:flex-row sm:items-baseline sm:justify-between">
         <div className="flex items-baseline gap-3">
-          <Wordmark className="text-lg text-foreground" />
-          <span>Literature tools for cognitive neuroscience.</span>
+          <Wordmark className="text-base text-foreground" />
         </div>
         <nav className="flex gap-6">
           <Link href="/chat" className="hover:text-foreground">Chat</Link>
-          <Link href="/eeg-guide" className="hover:text-foreground">EEG protocol</Link>
+          <Link href="/eeg-guide" className="hover:text-foreground">EEG guide</Link>
         </nav>
       </div>
     </footer>

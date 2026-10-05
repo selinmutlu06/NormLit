@@ -23,8 +23,6 @@ const sections = [
   { id: "cleanup", title: "Cleanup" },
 ]
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI"]
-
 // Steps rendered with StepCard across all sections
 const TOTAL_STEPS = 17
 
@@ -89,18 +87,16 @@ export default function EEGGuidePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader trail="EEG protocol" />
+      <SiteHeader />
 
       <div className="mx-auto max-w-6xl px-6 pb-16 pt-12 lg:pt-16">
         {/* Title block */}
         <div className="border-b pb-10">
-          <p className="font-mono text-xs text-muted-foreground">BioSemi ActiveTwo protocol</p>
-          <h1 className="mt-4 max-w-3xl font-serif text-4xl font-normal leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-            Running an EEG session, step by step
+          <h1 className="max-w-3xl font-serif text-4xl font-normal leading-[1.08] tracking-tight sm:text-5xl">
+            EEG guide
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            From participant preparation to cleanup. Work through each section in order and check off steps as you
-            complete them.
+            How to run an EEG session on the BioSemi ActiveTwo. Check off each step as you go.
           </p>
           <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4 text-sm">
             {[
@@ -109,7 +105,7 @@ export default function EEGGuidePage() {
               { label: "Channels", value: "64 / 128" },
             ].map((item) => (
               <div key={item.label}>
-                <dt className="font-mono text-xs text-muted-foreground">{item.label}</dt>
+                <dt className="text-xs text-muted-foreground">{item.label}</dt>
                 <dd className="mt-1">{item.value}</dd>
               </div>
             ))}
@@ -119,7 +115,7 @@ export default function EEGGuidePage() {
         {/* Section strip for small screens */}
         <nav className="-mx-6 overflow-x-auto border-b px-6 lg:hidden" aria-label="Sections">
           <ol className="flex gap-6 whitespace-nowrap text-sm">
-            {sections.map((section, i) => (
+            {sections.map((section) => (
               <li key={section.id}>
                 <button
                   onClick={() => setActiveSection(section.id)}
@@ -129,7 +125,6 @@ export default function EEGGuidePage() {
                       : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  <span className="mr-1.5 font-mono text-xs">{ROMAN[i]}</span>
                   {section.title}
                 </button>
               </li>
@@ -142,23 +137,18 @@ export default function EEGGuidePage() {
           <aside className="hidden lg:block">
             <div className="sticky top-24 space-y-10">
               <nav aria-label="Sections">
-                <p className="font-mono text-xs text-muted-foreground">Contents</p>
+                <p className="text-xs text-muted-foreground">Sections</p>
                 <ol className="mt-3 border-t">
-                  {sections.map((section, i) => (
+                  {sections.map((section) => (
                     <li key={section.id} className="border-b">
                       <button
                         onClick={() => setActiveSection(section.id)}
-                        className={`flex w-full items-baseline gap-3 py-2.5 text-left text-sm transition-colors ${
+                        className={`flex w-full items-baseline py-2.5 text-left text-sm transition-colors ${
                           activeSection === section.id
                             ? "text-foreground"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        <span
-                          className={`w-6 font-mono text-xs ${activeSection === section.id ? "text-accent" : ""}`}
-                        >
-                          {ROMAN[i]}
-                        </span>
                         {section.title}
                       </button>
                     </li>
@@ -168,8 +158,8 @@ export default function EEGGuidePage() {
 
               <div>
                 <div className="flex items-baseline justify-between">
-                  <p className="font-mono text-xs text-muted-foreground">Progress</p>
-                  <p className="font-mono text-xs">
+                  <p className="text-xs text-muted-foreground">Progress</p>
+                  <p className="text-xs">
                     {completedSteps.length}/{TOTAL_STEPS}
                   </p>
                 </div>
@@ -242,7 +232,7 @@ export default function EEGGuidePage() {
                         <tbody>
                           {capSizes.map((size, i) => (
                             <tr key={i} className="border-b border-border/50">
-                              <td className="py-3 px-4 font-mono">{size.size}</td>
+                              <td className="py-3 px-4">{size.size}</td>
                               <td className="py-3 px-4">{size.circumference}</td>
                               <td className="py-3 px-4 text-muted-foreground">{size.typical}</td>
                             </tr>
@@ -256,7 +246,7 @@ export default function EEGGuidePage() {
                 <div className="grid gap-6 md:grid-cols-2">
                   <Card className="border-accent/50">
                     <CardHeader>
-                      <CardTitle className="text-accent">
+                      <CardTitle>
                         Important precautions
                       </CardTitle>
                     </CardHeader>
@@ -641,7 +631,7 @@ export default function EEGGuidePage() {
                         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                           <div className="flex items-center gap-3">
                             <span className="size-2 rounded-full bg-accent" aria-hidden />
-                            <span className="font-mono text-xs">Example recording view</span>
+                            <span className="text-xs">Example recording view</span>
                           </div>
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-muted-foreground">
                             <span>Sample Rate: 2048 Hz</span>
@@ -945,7 +935,7 @@ function StepCard({ step, title, description, tips, completed, onToggle }: StepC
         onClick={onToggle}
         aria-pressed={completed}
         aria-label={completed ? `Mark step ${step} incomplete` : `Mark step ${step} complete`}
-        className={`flex size-9 items-center justify-center rounded-sm border font-mono text-sm transition-colors ${
+        className={`flex size-9 items-center justify-center rounded-sm border text-sm transition-colors ${
           completed
             ? "border-accent bg-accent text-accent-foreground"
             : "border-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground"
@@ -965,7 +955,7 @@ function StepCard({ step, title, description, tips, completed, onToggle }: StepC
 
         {tips.length > 0 && (
           <div className="mt-4 max-w-2xl rounded-sm bg-muted/60 px-4 py-3">
-            <p className="font-mono text-xs text-muted-foreground">Tips</p>
+            <p className="text-xs font-medium text-muted-foreground">Tips</p>
             <ul className="mt-2 space-y-1.5">
               {tips.map((tip, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm">

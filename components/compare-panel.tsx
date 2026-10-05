@@ -126,16 +126,16 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
         <Button variant="outline" size="sm" className="gap-2">
           <GitCompare className="size-4" />
           <span className="hidden sm:inline">Compare</span>
-          <span className="font-mono text-xs text-accent">
+          <span className="text-xs text-accent">
             {selectedPaperIds.length}
           </span>
         </Button>
       </DialogTrigger>
       <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col">
         <DialogHeader>
-          <DialogTitle className="font-serif text-2xl font-normal tracking-tight">Compare papers</DialogTitle>
+          <DialogTitle>Compare papers</DialogTitle>
           <DialogDescription>
-            Read {selectedPaperIds.length} selected papers side by side.
+            Compare the {selectedPaperIds.length} papers you selected.
           </DialogDescription>
         </DialogHeader>
 
@@ -143,7 +143,7 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
           {selectedPapers.map((paper) => (
             <div
               key={paper.id}
-              className="rounded-sm border px-2 py-0.5 font-mono text-xs text-muted-foreground"
+              className="rounded-sm border px-2 py-0.5 text-xs text-muted-foreground"
             >
               {paper.authors.split(",")[0].trim()}
               {paper.year ? `, ${paper.year}` : ""}
@@ -158,28 +158,28 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
               currentType={comparisonType}
               onSelect={setComparisonType}
               title="Overall synthesis"
-              description="Themes, patterns, and relationships"
+              description="Main themes across the papers"
             />
             <ComparisonTypeButton
               type="findings"
               currentType={comparisonType}
               onSelect={setComparisonType}
               title="Findings"
-              description="Results and conclusions"
+              description="What each paper found"
             />
             <ComparisonTypeButton
               type="methods"
               currentType={comparisonType}
               onSelect={setComparisonType}
               title="Methods"
-              description="Methodologies and procedures"
+              description="How each study was run"
             />
             <ComparisonTypeButton
               type="contradictions"
               currentType={comparisonType}
               onSelect={setComparisonType}
               title="Contradictions"
-              description="Conflicting results or claims"
+              description="Where the papers disagree"
             />
           </div>
         )}
@@ -198,7 +198,7 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
                 {isLoading && (
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="size-4 animate-spin" />
-                    Analyzing papers…
+                    Comparing…
                   </span>
                 )}
               </div>

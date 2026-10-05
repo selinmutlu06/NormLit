@@ -26,17 +26,17 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   metadataBase: new URL('https://v0-normlit-research-assistant.vercel.app'),
   title: 'NormLit',
-  description: 'AI-powered research assistant for cognitive neuroscience labs. Chat with your papers, compare findings, and accelerate your research.',
+  description: 'Chat with your research papers and get answers with citations.',
   generator: 'v0.app',
   openGraph: {
-    title: 'NormLit - Research Literature Assistant',
-    description: 'AI-powered research assistant for cognitive neuroscience labs. Chat with your papers, compare findings, and accelerate your research.',
+    title: 'NormLit',
+    description: 'Chat with your research papers and get answers with citations.',
     images: ['/brain-icon.svg'],
   },
   twitter: {
     card: 'summary',
-    title: 'NormLit - Research Literature Assistant',
-    description: 'AI-powered research assistant for cognitive neuroscience labs.',
+    title: 'NormLit',
+    description: 'Chat with your research papers and get answers with citations.',
     images: ['/brain-icon.svg'],
   },
 }
