@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Paper } from "@/lib/types"
-import { Search, FileText, ChevronLeft, ChevronRight, Check } from "lucide-react"
+import { Search, ChevronLeft, ChevronRight, Check } from "lucide-react"
 import { PaperUpload } from "@/components/paper-upload"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -52,7 +52,7 @@ export function PaperSidebar({
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-foreground/20 md:hidden"
           onClick={onToggle}
         />
       )}
@@ -60,16 +60,16 @@ export function PaperSidebar({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-80 flex-col border-r border-border bg-background transition-transform md:relative md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-80 flex-col border-r border-border bg-sidebar transition-transform md:relative md:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border p-4">
-          <div className="flex items-center gap-2">
-            <h2 className="font-sans text-lg font-semibold tracking-tight">Papers</h2>
+        <div className="flex h-14 items-center justify-between border-b border-border px-4">
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-base font-semibold">Papers</h2>
             {!isLoading && papers.length > 0 && (
-              <span className="rounded-full bg-accent/15 px-2 py-0.5 font-mono text-xs font-medium text-accent">
+              <span className="text-xs text-muted-foreground">
                 {papers.length}
               </span>
             )}
@@ -89,11 +89,11 @@ export function PaperSidebar({
         </div>
 
         {/* Search */}
-        <div className="border-b border-border p-4">
+        <div className="border-b border-border px-4 pb-3 pt-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search papers..."
+              placeholder="Search papers"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
@@ -102,25 +102,18 @@ export function PaperSidebar({
 
           {/* Year filter */}
           {years.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1">
-              <Button
-                variant={yearFilter === null ? "secondary" : "ghost"}
-                size="sm"
-                className="h-7 text-xs"
-                onClick={() => setYearFilter(null)}
-              >
+            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs">
+              <YearTab active={yearFilter === null} onClick={() => setYearFilter(null)}>
                 All
-              </Button>
+              </YearTab>
               {years.slice(0, 5).map((year) => (
-                <Button
+                <YearTab
                   key={year}
-                  variant={yearFilter === year ? "secondary" : "ghost"}
-                  size="sm"
-                  className="h-7 text-xs"
+                  active={yearFilter === year}
                   onClick={() => setYearFilter(year === yearFilter ? null : year)}
                 >
                   {year}
-                </Button>
+                </YearTab>
               ))}
             </div>
           )}
@@ -128,11 +121,11 @@ export function PaperSidebar({
 
         {/* Paper list */}
         <ScrollArea className="flex-1">
-          <div className="p-2">
+          <div>
             {isLoading ? (
-              <div className="space-y-2 p-2">
+              <div className="divide-y">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="space-y-2 rounded-lg border border-border p-3">
+                  <div key={i} className="space-y-2 px-4 py-3">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-3 w-2/3" />
                     <Skeleton className="h-3 w-1/4" />
@@ -140,11 +133,8 @@ export function PaperSidebar({
                 ))}
               </div>
             ) : filteredPapers.length === 0 ? (
-              <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-muted">
-                  <FileText className="size-6 text-muted-foreground/60" />
-                </div>
-                <p className="mt-3 text-sm font-medium text-foreground">
+              <div className="px-4 py-10">
+                <p className="text-sm font-medium text-foreground">
                   {papers.length === 0 ? "No papers yet" : "No matches"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -154,7 +144,7 @@ export function PaperSidebar({
                 </p>
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="divide-y border-b">
                 {filteredPapers.map((paper) => (
                   <PaperCard
                     key={paper.id}
@@ -170,12 +160,10 @@ export function PaperSidebar({
 
         {/* Selection summary */}
         {selectedPaperIds.length > 0 && (
-          <div className="flex items-center gap-2 border-t border-border bg-accent/5 p-4">
-            <span className="flex size-6 items-center justify-center rounded-full bg-accent/15 font-mono text-xs font-semibold text-accent">
-              {selectedPaperIds.length}
-            </span>
-            <p className="text-sm text-muted-foreground">
-              paper{selectedPaperIds.length !== 1 ? "s" : ""} focused
+          <div className="flex items-baseline gap-2 border-t border-border px-4 py-3 text-sm">
+            <span className="text-accent">{selectedPaperIds.length}</span>
+            <p className="text-muted-foreground">
+              paper{selectedPaperIds.length !== 1 ? "s" : ""} selected
             </p>
           </div>
         )}
@@ -185,7 +173,8 @@ export function PaperSidebar({
       <Button
         variant="ghost"
         size="icon"
-        className="absolute left-80 top-4 z-50 hidden md:flex"
+        className="absolute left-80 top-2.5 z-50 ml-1 hidden md:flex"
+        aria-label={isOpen ? "Hide papers" : "Show papers"}
         onClick={onToggle}
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(-320px)",
@@ -216,35 +205,54 @@ function PaperCard({
       type="button"
       onClick={onToggle}
       className={cn(
-        "w-full rounded-xl border p-3 text-left transition-all duration-200",
-        isSelected
-          ? "border-accent/50 bg-accent/5 shadow-sm ring-1 ring-accent/20"
-          : "border-border hover:-translate-y-0.5 hover:border-accent/30 hover:bg-muted/60 hover:shadow-sm"
+        "relative w-full px-4 py-3 text-left transition-colors",
+        isSelected ? "bg-background" : "hover:bg-background/60"
       )}
     >
       <div className="flex items-start gap-2.5">
         <div
           className={cn(
-            "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-md border transition-colors",
+            "mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded-[2px] border transition-colors",
             isSelected
               ? "border-accent bg-accent text-accent-foreground"
-              : "border-muted-foreground/30"
+              : "border-foreground/30"
           )}
         >
-          {isSelected && <Check className="size-3" />}
+          {isSelected && <Check className="size-2.5" strokeWidth={3} />}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-2 text-sm font-medium leading-tight text-foreground">
+          <h3 className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
             {paper.title}
           </h3>
           <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
             {paper.authors}
+            {paper.year ? <span> · {paper.year}</span> : null}
           </p>
-          {paper.year && (
-            <p className="mt-0.5 text-xs text-muted-foreground">{paper.year}</p>
-          )}
         </div>
       </div>
+    </button>
+  )
+}
+
+function YearTab({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "border-b py-0.5 transition-colors",
+        active ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {children}
     </button>
   )
 }

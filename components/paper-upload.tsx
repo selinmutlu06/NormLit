@@ -118,11 +118,11 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
         onDrop={onDrop}
         onClick={() => !isUploading && inputRef.current?.click()}
         className={cn(
-          "cursor-pointer rounded-xl border-2 border-dashed transition-all duration-200",
-          compact ? "p-3" : "p-5",
+          "cursor-pointer rounded-sm border border-dashed transition-colors outline-none focus-visible:border-accent",
+          compact ? "px-3 py-4" : "p-6",
           isDragging
-            ? "scale-[1.02] border-accent bg-accent/10 shadow-md ring-2 ring-accent/20"
-            : "border-border bg-muted/30 hover:border-accent/50 hover:bg-muted/50",
+            ? "border-accent bg-accent/5"
+            : "border-foreground/25 hover:border-foreground/60",
           isUploading && "pointer-events-none opacity-70",
         )}
       >
@@ -142,16 +142,16 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
 
         <div className="flex flex-col items-center text-center">
           {isUploading ? (
-            <Loader2 className="size-8 animate-spin text-accent" />
+            <Loader2 className="size-5 animate-spin text-accent" />
           ) : (
             <Upload
               className={cn(
-                "size-8 transition-colors",
+                "size-5 transition-colors",
                 isDragging ? "text-accent" : "text-muted-foreground",
               )}
             />
           )}
-          <p className={cn("mt-2 font-medium text-foreground", compact && "text-sm")}>
+          <p className={cn("mt-2 text-foreground", compact && "text-sm")}>
             {isUploading ? "Processing PDFs…" : "Drop PDFs here"}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -171,10 +171,10 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
           {results.map((result) => (
             <li
               key={`${result.filename}-${result.paperId ?? result.error}`}
-              className="flex items-start gap-2 rounded-md border border-border bg-card px-2.5 py-2 text-xs"
+              className="flex items-start gap-2 rounded-sm border border-border bg-card px-2.5 py-2 text-xs"
             >
               {result.paperId ? (
-                <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-chart-5" />
+                <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-chart-3" />
               ) : (
                 <AlertCircle className="mt-0.5 size-3.5 shrink-0 text-destructive" />
               )}
@@ -182,7 +182,7 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
                 <p className="truncate font-medium text-foreground">{result.filename}</p>
                 {result.paperId ? (
                   <p className="text-muted-foreground">
-                    {result.title} · {result.chunkCount} chunks indexed
+                    {result.title} · added
                   </p>
                 ) : (
                   <p className="text-destructive">{result.error}</p>
@@ -205,7 +205,7 @@ export function PaperUpload({ onUploaded, compact = false }: PaperUploadProps) {
       {!compact && (
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <FileText className="size-3" />
-          <span>Embeddings use OpenAI; chat uses Claude Opus 4.8 when configured.</span>
+          <span>Uses OpenAI for search and Claude for answers.</span>
         </div>
       )}
     </div>

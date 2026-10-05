@@ -126,16 +126,16 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
         <Button variant="outline" size="sm" className="gap-2">
           <GitCompare className="size-4" />
           <span className="hidden sm:inline">Compare</span>
-          <span className="rounded-full bg-primary/10 px-1.5 text-xs font-medium text-primary">
+          <span className="text-xs text-accent">
             {selectedPaperIds.length}
           </span>
         </Button>
       </DialogTrigger>
       <DialogContent className="flex max-h-[85vh] max-w-3xl flex-col">
         <DialogHeader>
-          <DialogTitle className="font-sans">Compare Papers</DialogTitle>
+          <DialogTitle>Compare papers</DialogTitle>
           <DialogDescription>
-            Analyze {selectedPaperIds.length} selected papers with Claude Opus 4.8.
+            Compare the {selectedPaperIds.length} papers you selected.
           </DialogDescription>
         </DialogHeader>
 
@@ -143,7 +143,7 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
           {selectedPapers.map((paper) => (
             <div
               key={paper.id}
-              className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground"
+              className="rounded-sm border px-2 py-0.5 text-xs text-muted-foreground"
             >
               {paper.authors.split(",")[0].trim()}
               {paper.year ? `, ${paper.year}` : ""}
@@ -152,40 +152,40 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
         </div>
 
         {!result && !isLoading && (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid gap-px overflow-hidden rounded-sm border bg-border sm:grid-cols-2">
             <ComparisonTypeButton
               type="synthesis"
               currentType={comparisonType}
               onSelect={setComparisonType}
-              title="Overall Synthesis"
-              description="Themes, patterns, and relationships"
+              title="Overall synthesis"
+              description="Main themes across the papers"
             />
             <ComparisonTypeButton
               type="findings"
               currentType={comparisonType}
               onSelect={setComparisonType}
-              title="Compare Findings"
-              description="Results and conclusions"
+              title="Findings"
+              description="What each paper found"
             />
             <ComparisonTypeButton
               type="methods"
               currentType={comparisonType}
               onSelect={setComparisonType}
-              title="Compare Methods"
-              description="Methodologies and procedures"
+              title="Methods"
+              description="How each study was run"
             />
             <ComparisonTypeButton
               type="contradictions"
               currentType={comparisonType}
               onSelect={setComparisonType}
-              title="Find Contradictions"
-              description="Conflicting results or claims"
+              title="Contradictions"
+              description="Where the papers disagree"
             />
           </div>
         )}
 
         {(result || isLoading || error) && (
-          <ScrollArea className="min-h-[280px] flex-1 rounded-lg border border-border bg-muted/30 p-4">
+          <ScrollArea className="min-h-[280px] flex-1 rounded-sm border border-border bg-card p-4">
             {error ? (
               <div className="text-sm text-destructive">{error}</div>
             ) : (
@@ -198,7 +198,7 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
                 {isLoading && (
                   <span className="inline-flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="size-4 animate-spin" />
-                    Analyzing papers…
+                    Comparing…
                   </span>
                 )}
               </div>
@@ -220,12 +220,11 @@ export function ComparePanel({ papers, selectedPaperIds }: ComparePanelProps) {
                 setError(null)
               }}
             >
-              New Comparison
+              New comparison
             </Button>
           ) : (
             <Button onClick={handleCompare} disabled={selectedPaperIds.length < 2}>
-              <GitCompare className="mr-2 size-4" />
-              Compare Papers
+              Run comparison
             </Button>
           )}
         </div>
@@ -253,14 +252,21 @@ function ComparisonTypeButton({
     <button
       type="button"
       onClick={() => onSelect(type)}
-      className={`rounded-xl border p-3 text-left transition-all duration-200 ${
-        isSelected
-          ? "border-accent/50 bg-accent/5 shadow-sm ring-1 ring-accent/20"
-          : "border-border hover:-translate-y-0.5 hover:border-accent/30 hover:bg-muted/60 hover:shadow-sm"
+      aria-pressed={isSelected}
+      className={`flex items-start gap-3 p-3 text-left transition-colors ${
+        isSelected ? "bg-card" : "bg-background hover:bg-card"
       }`}
     >
-      <h4 className="text-sm font-medium text-foreground">{title}</h4>
-      <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+      <span
+        className={`mt-1 size-3 shrink-0 rounded-full border ${
+          isSelected ? "border-accent bg-accent" : "border-foreground/30"
+        }`}
+        aria-hidden
+      />
+      <span>
+        <span className="block text-sm font-medium text-foreground">{title}</span>
+        <span className="mt-0.5 block text-xs text-muted-foreground">{description}</span>
+      </span>
     </button>
   )
 }

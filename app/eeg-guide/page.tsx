@@ -3,58 +3,28 @@
 import { useState } from "react"
 import Link from "next/link"
 import { GuideReferencePanel } from "@/components/guide-reference-panel"
-import { 
-  BookOpen,
-  ChevronRight,
-  ChevronLeft,
-  CheckCircle2,
-  AlertTriangle, 
-  Info,
-  Clock,
-  Users,
-  Zap,
-  Droplets,
-  Settings,
-  Trash2,
-  ArrowLeft,
-  ChevronDown,
-  Play,
-  Pause,
-  ClipboardCheck,
-  Ruler,
-  MapPin,
-  Sparkles,
-  Plug,
-  Lock,
-  Target,
-  Box,
-  Rows3,
-  Syringe,
-  Gauge,
-  Undo2,
-  ShowerHead,
-  Shield,
-  Archive,
-  type LucideIcon,
-} from "lucide-react"
+import { ChevronRight, ChevronLeft, ArrowLeft, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Progress } from "@/components/ui/progress"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { SiteHeader } from "@/components/site-chrome"
 import { EEGWaveform } from "@/components/eeg-waveform"
 import { ElectrodeMap } from "@/components/electrode-map"
 
 const sections = [
-  { id: "overview", title: "Overview", icon: Info },
-  { id: "preparation", title: "Preparation", icon: Users },
-  { id: "setup", title: "Cap Setup", icon: Settings },
-  { id: "gel", title: "Gel Application", icon: Droplets },
-  { id: "recording", title: "Recording", icon: Zap },
-  { id: "cleanup", title: "Cleanup", icon: Trash2 },
+  { id: "overview", title: "Overview" },
+  { id: "preparation", title: "Preparation" },
+  { id: "setup", title: "Cap setup" },
+  { id: "gel", title: "Gel application" },
+  { id: "recording", title: "Recording" },
+  { id: "cleanup", title: "Cleanup" },
 ]
+
+// Steps rendered with StepCard across all sections
+const TOTAL_STEPS = 17
 
 const equipmentList = [
   { name: "BioSemi ActiveTwo System", required: true },
@@ -113,149 +83,100 @@ export default function EEGGuidePage() {
     )
   }
 
-  const progress = (completedSteps.length / 12) * 100
+  const progress = (completedSteps.length / TOTAL_STEPS) * 100
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="group flex items-center gap-2.5">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-sm transition-transform group-hover:scale-105">
-                <BookOpen className="size-4 text-primary-foreground" />
-              </span>
-              <span className="font-sans text-lg font-semibold tracking-tight">NormLit</span>
-            </Link>
-            <span className="text-muted-foreground/50">/</span>
-            <span className="text-sm font-medium text-muted-foreground">EEG Study Guide</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="size-4" />
-              <span>Est. setup time: 30-45 min</span>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+      <div className="mx-auto max-w-6xl px-6 pb-16 pt-12 lg:pt-16">
+        {/* Title block */}
+        <div className="border-b pb-10">
+          <h1 className="max-w-3xl font-serif text-4xl font-normal leading-[1.08] tracking-tight sm:text-5xl">
+            EEG guide
+          </h1>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            How to run an EEG session on the BioSemi ActiveTwo. Check off each step as you go.
+          </p>
+          <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4 text-sm">
+            {[
+              { label: "Setup time", value: "30–45 min" },
+              { label: "Staff", value: "2 researchers" },
+              { label: "Channels", value: "64 / 128" },
+            ].map((item) => (
+              <div key={item.label}>
+                <dt className="text-xs text-muted-foreground">{item.label}</dt>
+                <dd className="mt-1">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        {/* Section strip for small screens */}
+        <nav className="-mx-6 overflow-x-auto border-b px-6 lg:hidden" aria-label="Sections">
+          <ol className="flex gap-6 whitespace-nowrap text-sm">
+            {sections.map((section) => (
+              <li key={section.id}>
+                <button
+                  onClick={() => setActiveSection(section.id)}
+                  className={`border-b-2 py-3 transition-colors ${
+                    activeSection === section.id
+                      ? "border-accent text-foreground"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {section.title}
+                </button>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <div className="grid gap-12 pt-10 lg:grid-cols-[220px_1fr] lg:gap-16">
           {/* Sidebar Navigation */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6">
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">Progress</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Progress value={progress} className="h-2" />
-                  <p className="text-xs text-muted-foreground">
-                    {completedSteps.length} of 12 steps completed
-                  </p>
-                </CardContent>
-              </Card>
-
-              <nav className="space-y-1">
-                {sections.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                      activeSection === section.id
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <section.icon className="size-4" />
-                    {section.title}
-                  </button>
-                ))}
+            <div className="sticky top-24 space-y-10">
+              <nav aria-label="Sections">
+                <p className="text-xs text-muted-foreground">Sections</p>
+                <ol className="mt-3 border-t">
+                  {sections.map((section) => (
+                    <li key={section.id} className="border-b">
+                      <button
+                        onClick={() => setActiveSection(section.id)}
+                        className={`flex w-full items-baseline py-2.5 text-left text-sm transition-colors ${
+                          activeSection === section.id
+                            ? "text-foreground"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {section.title}
+                      </button>
+                    </li>
+                  ))}
+                </ol>
               </nav>
 
-              <Card className="bg-muted/50">
-                <CardContent className="pt-4">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="size-5 text-amber-500 shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Safety First</p>
-                      <p className="text-xs text-muted-foreground">
-                        Always follow your lab&apos;s IRB-approved protocols and safety guidelines.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <div>
+                <div className="flex items-baseline justify-between">
+                  <p className="text-xs text-muted-foreground">Progress</p>
+                  <p className="text-xs">
+                    {completedSteps.length}/{TOTAL_STEPS}
+                  </p>
+                </div>
+                <Progress value={progress} className="mt-3" />
+              </div>
+
+              <div className="border-l-2 border-accent pl-4">
+                <p className="text-sm font-medium">Safety first</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  Always follow your lab&apos;s IRB-approved protocols and safety guidelines.
+                </p>
+              </div>
             </div>
           </aside>
 
           {/* Main Content */}
-          <main className="space-y-8">
-            {/* Hero Section */}
-            <div className="relative overflow-hidden rounded-2xl border bg-card shadow-sm">
-              <div className="aurora" aria-hidden />
-              <div className="absolute inset-0 bg-grid-fade opacity-50" />
-              <div className="relative p-8 md:p-12">
-                <div className="flex flex-col md:flex-row gap-8 items-start">
-                  <div className="flex-1 space-y-4">
-                    <Badge variant="secondary" className="font-mono text-xs">
-                      BioSemi ActiveTwo Protocol
-                    </Badge>
-                    <h1 className="font-sans text-3xl md:text-4xl font-bold tracking-tight">
-                      Complete <span className="text-gradient">EEG Study Guide</span>
-                    </h1>
-                    <p className="text-lg text-muted-foreground max-w-2xl">
-                      A comprehensive, step-by-step guide for conducting EEG studies using the 
-                      BioSemi ActiveTwo system. From participant preparation to data cleanup.
-                    </p>
-                    <div className="flex flex-wrap gap-3 pt-2">
-                      <Badge variant="outline" className="gap-1">
-                        <Clock className="size-3" />
-                        30-45 min setup
-                      </Badge>
-                      <Badge variant="outline" className="gap-1">
-                        <Users className="size-3" />
-                        2 researchers recommended
-                      </Badge>
-                      <Badge variant="outline" className="gap-1">
-                        <Zap className="size-3" />
-                        64/128 channel
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="w-full md:w-64 h-32 rounded-lg overflow-hidden border border-border bg-background">
-                    <EEGWaveform 
-                      channels={4} 
-                      height={128} 
-                      showLabels={false}
-                      animated={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {sections.slice(1).map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className="card-interactive group flex items-center gap-4 rounded-xl border bg-card p-4 text-left"
-                >
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
-                    <section.icon className="size-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">{section.title}</p>
-                    <p className="text-sm text-muted-foreground">View steps</p>
-                  </div>
-                  <ChevronRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
-                </button>
-              ))}
-            </div>
-
+          <main className="min-w-0 space-y-8">
             {/* Tabbed Content */}
             <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
               <TabsList className="hidden">
@@ -266,21 +187,19 @@ export default function EEGGuidePage() {
               <TabsContent value="overview" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-2xl">Equipment Checklist</CardTitle>
+                    <CardTitle className="text-3xl">Equipment checklist</CardTitle>
                     <CardDescription>
                       Gather all materials before beginning the study session
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="grid gap-x-8 border-t sm:grid-cols-2">
                       {equipmentList.map((item, i) => (
                         <div
                           key={i}
-                          className={`flex items-center gap-3 rounded-lg border p-3 ${
-                            item.required ? "border-border" : "border-dashed border-muted"
-                          }`}
+                          className="flex items-center gap-3 border-b py-2.5"
                         >
-                          <CheckCircle2 className={`size-5 ${item.required ? "text-primary" : "text-muted-foreground"}`} />
+                          <span className="size-3 shrink-0 rounded-[2px] border border-foreground/40" aria-hidden />
                           <span className={item.required ? "" : "text-muted-foreground"}>
                             {item.name}
                           </span>
@@ -295,7 +214,7 @@ export default function EEGGuidePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-2xl">Cap Size Guide</CardTitle>
+                    <CardTitle className="text-3xl">Cap size guide</CardTitle>
                     <CardDescription>
                       Measure head circumference at the widest point (above eyebrows, around occipital protuberance)
                     </CardDescription>
@@ -313,7 +232,7 @@ export default function EEGGuidePage() {
                         <tbody>
                           {capSizes.map((size, i) => (
                             <tr key={i} className="border-b border-border/50">
-                              <td className="py-3 px-4 font-mono">{size.size}</td>
+                              <td className="py-3 px-4">{size.size}</td>
                               <td className="py-3 px-4">{size.circumference}</td>
                               <td className="py-3 px-4 text-muted-foreground">{size.typical}</td>
                             </tr>
@@ -325,11 +244,10 @@ export default function EEGGuidePage() {
                 </Card>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                  <Card className="border-amber-500/20 bg-amber-500/5">
+                  <Card className="border-accent/50">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
-                        <AlertTriangle className="size-5" />
-                        Important Precautions
+                      <CardTitle>
+                        Important precautions
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3 text-sm">
@@ -344,11 +262,10 @@ export default function EEGGuidePage() {
                     </CardContent>
                   </Card>
 
-                  <Card className="border-primary/20 bg-primary/5">
+                  <Card>
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-primary">
-                        <Info className="size-5" />
-                        Best Practices
+                      <CardTitle>
+                        Best practices
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3 text-sm">
@@ -369,14 +286,14 @@ export default function EEGGuidePage() {
               <TabsContent value="preparation" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-2xl">Participant Preparation</CardTitle>
+                    <CardTitle className="text-3xl">Participant preparation</CardTitle>
                     <CardDescription>
                       Steps to prepare the participant for EEG recording
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <GuideReferencePanel
-                      title="Reference: 10-20 electrode positions"
+                      title="The 10–20 electrode positions"
                       description="Landmarks (nasion, inion, preauricular points) align the cap to this standard layout."
                       mediaKey="eeg1020"
                     />
@@ -388,7 +305,6 @@ export default function EEGGuidePage() {
                       tips={["Use clear, non-technical language", "Allow time for questions", "Provide a copy of signed consent"]}
                       completed={completedSteps.includes("prep-1")}
                       onToggle={() => toggleStep("prep-1")}
-                      icon={ClipboardCheck}
                     />
                     
                     <StepCard
@@ -398,7 +314,6 @@ export default function EEGGuidePage() {
                       tips={["Measure twice for accuracy", "Round up if between sizes", "Record measurement in participant file"]}
                       completed={completedSteps.includes("prep-2")}
                       onToggle={() => toggleStep("prep-2")}
-                      icon={Ruler}
                     />
 
                     <StepCard
@@ -408,7 +323,6 @@ export default function EEGGuidePage() {
                       tips={["Use a skin-safe marker if needed", "These landmarks ensure consistent placement", "Cz should be exactly between nasion-inion and preauricular points"]}
                       completed={completedSteps.includes("prep-3")}
                       onToggle={() => toggleStep("prep-3")}
-                      icon={MapPin}
                     />
 
                     <StepCard
@@ -418,7 +332,6 @@ export default function EEGGuidePage() {
                       tips={["Be gentle - avoid irritating the skin", "Let alcohol dry completely before gel application", "For external electrodes, clean mastoid areas"]}
                       completed={completedSteps.includes("prep-4")}
                       onToggle={() => toggleStep("prep-4")}
-                      icon={Sparkles}
                     />
                   </CardContent>
                 </Card>
@@ -428,13 +341,13 @@ export default function EEGGuidePage() {
               <TabsContent value="setup" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-2xl">EEG Cap Setup</CardTitle>
+                    <CardTitle className="text-3xl">EEG cap setup</CardTitle>
                     <CardDescription>
                       Proper cap placement is critical for accurate recordings
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="rounded-xl border border-border bg-muted/20 p-4 sm:p-6">
+                    <div className="rounded-sm border border-border bg-background p-4 sm:p-6">
                       <p className="mb-4 text-center text-sm text-muted-foreground">
                         10-20 system. Click an electrode for placement notes, and align <span className="font-mono font-medium text-foreground">Cz</span> at the vertex.
                       </p>
@@ -442,7 +355,7 @@ export default function EEGGuidePage() {
                     </div>
 
                     <GuideReferencePanel
-                      title="Reference: EEG recording cap"
+                      title="An EEG recording cap"
                       description="Electrodes sit in holders on the cap; hair is parted and gel applied at each site."
                       mediaKey="eegRecordingCap"
                     />
@@ -454,7 +367,6 @@ export default function EEGGuidePage() {
                       tips={["If between sizes, try smaller first", "Cap should not slide when participant moves head", "Ensure all electrode holes align with scalp"]}
                       completed={completedSteps.includes("setup-1")}
                       onToggle={() => toggleStep("setup-1")}
-                      icon={Box}
                     />
 
                     <StepCard
@@ -464,7 +376,6 @@ export default function EEGGuidePage() {
                       tips={["Have participant hold front of cap while you adjust back", "Check symmetry by comparing left and right electrode positions", "Cz should be at the very top of the head"]}
                       completed={completedSteps.includes("setup-2")}
                       onToggle={() => toggleStep("setup-2")}
-                      icon={Target}
                     />
 
                     <StepCard
@@ -474,11 +385,10 @@ export default function EEGGuidePage() {
                       tips={["Chin strap should be snug but comfortable", "Check that no electrodes are lifted off the scalp", "Ask participant if they feel any pressure points"]}
                       completed={completedSteps.includes("setup-3")}
                       onToggle={() => toggleStep("setup-3")}
-                      icon={Lock}
                     />
 
                     <GuideReferencePanel
-                      title="Reference: EEG amplifier setup"
+                      title="An EEG amplifier setup"
                       description="Verify cable connections and system status before starting impedance checks."
                       mediaKey="eegClinicalSetup"
                     />
@@ -490,109 +400,108 @@ export default function EEGGuidePage() {
                       tips={["Check that status LED indicates proper connection", "Route cables to minimize movement artifacts", "Ensure battery is fully charged before session"]}
                       completed={completedSteps.includes("setup-4")}
                       onToggle={() => toggleStep("setup-4")}
-                      icon={Plug}
                     />
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-xl">Brain Regions Overview</CardTitle>
+                    <CardTitle className="text-2xl">Brain regions overview</CardTitle>
                     <CardDescription>
                       Understanding which brain areas each electrode group covers
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-6 md:grid-cols-2">
-                      <div className="space-y-4">
-                        <div className="p-4 rounded-lg border border-blue-500/30 bg-blue-500/5">
+                    <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
+                      <div className="space-y-6">
+                        <div className="border-t pt-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="size-3 rounded-full bg-blue-500" />
-                            <h4 className="font-medium">Frontal Lobe</h4>
+                            <div className="size-2.5 rounded-full" style={{ backgroundColor: "var(--chart-1)" }} />
+                            <h4 className="font-serif text-lg">Frontal Lobe</h4>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">
                             Executive function, decision making, planning, and motor control.
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {["Fp1", "Fp2", "Fpz", "AF3", "AF4", "AF7", "AF8", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "Fz", "FC1", "FC2", "FC3", "FC4", "FC5", "FC6", "FCz"].map(e => (
-                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                              <Badge key={e} variant="outline" className="font-mono text-xs font-normal text-muted-foreground">{e}</Badge>
                             ))}
                           </div>
                         </div>
 
-                        <div className="p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+                        <div className="border-t pt-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="size-3 rounded-full bg-green-500" />
-                            <h4 className="font-medium">Central (Motor Cortex)</h4>
+                            <div className="size-2.5 rounded-full" style={{ backgroundColor: "var(--chart-3)" }} />
+                            <h4 className="font-serif text-lg">Central (Motor Cortex)</h4>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">
                             Primary motor cortex and somatosensory processing.
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {["C1", "C2", "C3", "C4", "C5", "C6", "Cz"].map(e => (
-                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                              <Badge key={e} variant="outline" className="font-mono text-xs font-normal text-muted-foreground">{e}</Badge>
                             ))}
                           </div>
                         </div>
 
-                        <div className="p-4 rounded-lg border border-purple-500/30 bg-purple-500/5">
+                        <div className="border-t pt-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="size-3 rounded-full bg-purple-500" />
-                            <h4 className="font-medium">Temporal Lobe</h4>
+                            <div className="size-2.5 rounded-full" style={{ backgroundColor: "var(--chart-4)" }} />
+                            <h4 className="font-serif text-lg">Temporal Lobe</h4>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">
                             Auditory processing, memory, language comprehension.
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {["T7", "T8", "FT7", "FT8", "TP7", "TP8"].map(e => (
-                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                              <Badge key={e} variant="outline" className="font-mono text-xs font-normal text-muted-foreground">{e}</Badge>
                             ))}
                           </div>
                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                        <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
+                      <div className="space-y-6">
+                        <div className="border-t pt-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="size-3 rounded-full bg-amber-500" />
-                            <h4 className="font-medium">Parietal Lobe</h4>
+                            <div className="size-2.5 rounded-full" style={{ backgroundColor: "var(--chart-2)" }} />
+                            <h4 className="font-serif text-lg">Parietal Lobe</h4>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">
                             Spatial processing, attention, sensory integration.
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "Pz", "CP1", "CP2", "CP3", "CP4", "CP5", "CP6", "CPz"].map(e => (
-                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                              <Badge key={e} variant="outline" className="font-mono text-xs font-normal text-muted-foreground">{e}</Badge>
                             ))}
                           </div>
                         </div>
 
-                        <div className="p-4 rounded-lg border border-rose-500/30 bg-rose-500/5">
+                        <div className="border-t pt-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="size-3 rounded-full bg-rose-500" />
-                            <h4 className="font-medium">Occipital Lobe</h4>
+                            <div className="size-2.5 rounded-full" style={{ backgroundColor: "var(--chart-5)" }} />
+                            <h4 className="font-serif text-lg">Occipital Lobe</h4>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">
                             Visual processing and visual perception.
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {["O1", "O2", "Oz", "PO3", "PO4", "PO7", "PO8", "POz", "Iz"].map(e => (
-                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                              <Badge key={e} variant="outline" className="font-mono text-xs font-normal text-muted-foreground">{e}</Badge>
                             ))}
                           </div>
                         </div>
 
-                        <div className="p-4 rounded-lg border border-gray-500/30 bg-gray-500/5">
+                        <div className="border-t pt-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="size-3 rounded-full bg-gray-500" />
-                            <h4 className="font-medium">Reference Electrodes</h4>
+                            <div className="size-2.5 rounded-full" style={{ backgroundColor: "var(--muted-foreground)" }} />
+                            <h4 className="font-serif text-lg">Reference Electrodes</h4>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">
                             Mastoid or earlobe references for differential recording.
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {["A1", "A2"].map(e => (
-                              <Badge key={e} variant="secondary" className="font-mono text-xs">{e}</Badge>
+                              <Badge key={e} variant="outline" className="font-mono text-xs font-normal text-muted-foreground">{e}</Badge>
                             ))}
                           </div>
                         </div>
@@ -606,7 +515,7 @@ export default function EEGGuidePage() {
               <TabsContent value="gel" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-2xl">Gel Application</CardTitle>
+                    <CardTitle className="text-3xl">Gel application</CardTitle>
                     <CardDescription>
                       Proper gel application is essential for good signal quality and low impedances
                     </CardDescription>
@@ -614,12 +523,12 @@ export default function EEGGuidePage() {
                   <CardContent className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">
                       <GuideReferencePanel
-                        title="Reference: electrode cap on scalp"
+                        title="Electrode cap on the scalp"
                         mediaKey="eegRecordingCap"
                         className="h-full"
                       />
                       <div className="space-y-4">
-                        <h3 className="font-sans text-xl font-semibold">About SignaGel</h3>
+                        <h3 className="font-serif text-2xl tracking-tight">About SignaGel</h3>
                         <p className="text-muted-foreground">
                           SignaGel is a highly conductive electrode gel specifically designed for 
                           EEG recordings. It provides excellent conductivity while being gentle on 
@@ -627,19 +536,19 @@ export default function EEGGuidePage() {
                         </p>
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span className="text-sm">High chloride content for conductivity</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span className="text-sm">Water-soluble and easy to clean</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span className="text-sm">Hypoallergenic formula</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <CheckCircle2 className="size-4 text-primary" />
+                            <span className="h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span className="text-sm">Doesn&apos;t dry out during long sessions</span>
                           </div>
                         </div>
@@ -653,7 +562,6 @@ export default function EEGGuidePage() {
                       tips={["Remove air bubbles from syringe", "Keep gel at room temperature", "Have 2-3 syringes prepared in advance"]}
                       completed={completedSteps.includes("gel-1")}
                       onToggle={() => toggleStep("gel-1")}
-                      icon={Droplets}
                     />
 
                     <StepCard
@@ -663,7 +571,6 @@ export default function EEGGuidePage() {
                       tips={["Use a gentle swirling motion", "Don't scratch or irritate the scalp", "Ensure you can see the scalp through the electrode hole"]}
                       completed={completedSteps.includes("gel-2")}
                       onToggle={() => toggleStep("gel-2")}
-                      icon={Rows3}
                     />
 
                     <StepCard
@@ -673,7 +580,6 @@ export default function EEGGuidePage() {
                       tips={["Don't overfill - gel bridges between electrodes cause shorts", "A small amount (pea-sized) is usually sufficient", "You should feel slight resistance as gel contacts scalp"]}
                       completed={completedSteps.includes("gel-3")}
                       onToggle={() => toggleStep("gel-3")}
-                      icon={Syringe}
                     />
 
                     <StepCard
@@ -683,16 +589,14 @@ export default function EEGGuidePage() {
                       tips={["Start recording to see live impedance values", "Focus on problem electrodes first", "Document any persistently high-impedance channels"]}
                       completed={completedSteps.includes("gel-4")}
                       onToggle={() => toggleStep("gel-4")}
-                      icon={Gauge}
                     />
                   </CardContent>
                 </Card>
 
-                <Card className="border-primary/20">
+                <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Droplets className="size-5 text-primary" />
-                      Impedance Troubleshooting
+                    <CardTitle className="text-2xl">
+                      Impedance troubleshooting
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -716,30 +620,29 @@ export default function EEGGuidePage() {
               <TabsContent value="recording" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-2xl">Recording Session</CardTitle>
+                    <CardTitle className="text-3xl">Recording session</CardTitle>
                     <CardDescription>
                       Tips for successful EEG data acquisition
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="rounded-xl border border-border overflow-hidden">
-                      <div className="bg-muted/50 p-4 border-b border-border">
+                    <div className="overflow-hidden rounded-sm border border-border">
+                      <div className="border-b border-border px-4 py-2.5">
                         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                           <div className="flex items-center gap-3">
-                            <div className="size-3 rounded-full bg-green-500 animate-pulse" />
-                            <span className="font-mono text-sm">Recording Active</span>
+                            <span className="size-2 rounded-full bg-accent" aria-hidden />
+                            <span className="text-xs">Example recording view</span>
                           </div>
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-muted-foreground sm:text-sm">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-muted-foreground">
                             <span>Sample Rate: 2048 Hz</span>
                             <span>Channels: 64</span>
                           </div>
                         </div>
                       </div>
-                      <div className="h-48 bg-background">
+                      <div>
                         <EEGWaveform 
-                          channels={8} 
-                          height={192}
-                          showLabels={true}
+                          channels={8}
+                          labels={["Fp1", "Fz", "C3", "Cz", "C4", "Pz", "O1", "O2"]}
                           animated={true}
                         />
                       </div>
@@ -748,27 +651,27 @@ export default function EEGGuidePage() {
                     <div className="grid gap-4 md:grid-cols-2">
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-lg">Before Recording</CardTitle>
+                          <CardTitle>Before recording</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2 text-sm">
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Verify all impedances are acceptable</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Check signal quality in preview mode</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Confirm trigger codes are working</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Set correct filename and save location</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Brief participant on task instructions</span>
                           </div>
                         </CardContent>
@@ -776,48 +679,48 @@ export default function EEGGuidePage() {
 
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-lg">During Recording</CardTitle>
+                          <CardTitle>During recording</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2 text-sm">
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Monitor signal quality continuously</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Note any artifacts or issues in log</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Offer breaks if session is long</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Re-gel electrodes if impedances drift</span>
                           </div>
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="size-4 text-primary mt-0.5" />
+                            <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
                             <span>Keep room quiet and minimize movement</span>
                           </div>
                         </CardContent>
                       </Card>
                     </div>
 
-                    <Card className="bg-muted/50">
+                    <Card className="bg-background">
                       <CardHeader>
-                        <CardTitle className="text-lg">Common Artifacts to Watch For</CardTitle>
+                        <CardTitle>Common artifacts to watch for</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                           <div className="space-y-2">
-                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                            <div className="flex h-16 items-center justify-center rounded-sm border border-border bg-card">
                               <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
                                 <path 
                                   d="M0,20 Q10,20 20,5 T40,20 T60,5 T80,20 T100,5" 
                                   fill="none" 
                                   stroke="currentColor" 
                                   strokeWidth="2"
-                                  className="text-amber-500"
+                                  className="text-foreground"
                                 />
                               </svg>
                             </div>
@@ -825,14 +728,14 @@ export default function EEGGuidePage() {
                             <p className="text-xs text-muted-foreground">Large deflections in frontal channels</p>
                           </div>
                           <div className="space-y-2">
-                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                            <div className="flex h-16 items-center justify-center rounded-sm border border-border bg-card">
                               <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
                                 <path 
                                   d="M0,20 L10,15 L20,25 L30,15 L40,25 L50,15 L60,25 L70,15 L80,25 L90,15 L100,20" 
                                   fill="none" 
                                   stroke="currentColor" 
                                   strokeWidth="2"
-                                  className="text-red-500"
+                                  className="text-foreground"
                                 />
                               </svg>
                             </div>
@@ -840,14 +743,14 @@ export default function EEGGuidePage() {
                             <p className="text-xs text-muted-foreground">High-frequency noise from muscle tension</p>
                           </div>
                           <div className="space-y-2">
-                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                            <div className="flex h-16 items-center justify-center rounded-sm border border-border bg-card">
                               <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
                                 <path 
                                   d="M0,30 Q25,30 50,10 Q75,30 100,30" 
                                   fill="none" 
                                   stroke="currentColor" 
                                   strokeWidth="2"
-                                  className="text-blue-500"
+                                  className="text-foreground"
                                 />
                               </svg>
                             </div>
@@ -855,14 +758,14 @@ export default function EEGGuidePage() {
                             <p className="text-xs text-muted-foreground">Slow drifts from head/body movement</p>
                           </div>
                           <div className="space-y-2">
-                            <div className="h-16 rounded border border-border bg-background flex items-center justify-center">
+                            <div className="flex h-16 items-center justify-center rounded-sm border border-border bg-card">
                               <svg viewBox="0 0 100 40" className="w-full h-8 px-2">
                                 <path 
                                   d="M0,20 L5,10 L10,30 L15,10 L20,30 L25,10 L30,30 L35,10 L40,30 L45,10 L50,30 L55,10 L60,30 L65,10 L70,30 L75,10 L80,30 L85,10 L90,30 L95,10 L100,20" 
                                   fill="none" 
                                   stroke="currentColor" 
                                   strokeWidth="1.5"
-                                  className="text-purple-500"
+                                  className="text-foreground"
                                 />
                               </svg>
                             </div>
@@ -880,7 +783,7 @@ export default function EEGGuidePage() {
               <TabsContent value="cleanup" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-2xl">Post-Session Cleanup</CardTitle>
+                    <CardTitle className="text-3xl">Post-session cleanup</CardTitle>
                     <CardDescription>
                       Proper cleanup ensures participant comfort and equipment longevity
                     </CardDescription>
@@ -893,7 +796,6 @@ export default function EEGGuidePage() {
                       tips={["Go slowly to avoid pulling hair", "Have participant hold their head steady", "Support the cable to prevent tangling"]}
                       completed={completedSteps.includes("clean-1")}
                       onToggle={() => toggleStep("clean-1")}
-                      icon={Undo2}
                     />
 
                     <StepCard
@@ -903,7 +805,6 @@ export default function EEGGuidePage() {
                       tips={["Offer a comb or brush", "Provide privacy if using shower", "Have extra towels available"]}
                       completed={completedSteps.includes("clean-2")}
                       onToggle={() => toggleStep("clean-2")}
-                      icon={ShowerHead}
                     />
 
                     <StepCard
@@ -913,7 +814,6 @@ export default function EEGGuidePage() {
                       tips={["Never submerge the connector end", "Use gentle water pressure", "Check each electrode holder is clean"]}
                       completed={completedSteps.includes("clean-3")}
                       onToggle={() => toggleStep("clean-3")}
-                      icon={Sparkles}
                     />
 
                     <StepCard
@@ -923,7 +823,6 @@ export default function EEGGuidePage() {
                       tips={["Follow manufacturer guidelines", "Ensure complete contact with disinfectant", "Allow proper contact time per protocol"]}
                       completed={completedSteps.includes("clean-4")}
                       onToggle={() => toggleStep("clean-4")}
-                      icon={Shield}
                     />
 
                     <StepCard
@@ -933,14 +832,13 @@ export default function EEGGuidePage() {
                       tips={["Never store wet caps - promotes mold/bacteria", "Use cap stand or hook for drying", "Check electrodes for damage before storing"]}
                       completed={completedSteps.includes("clean-5")}
                       onToggle={() => toggleStep("clean-5")}
-                      icon={Archive}
                     />
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="font-sans text-xl">Equipment Maintenance Schedule</CardTitle>
+                    <CardTitle className="text-2xl">Equipment maintenance schedule</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -980,12 +878,12 @@ export default function EEGGuidePage() {
 
             {/* Navigation */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
-              <Link href="/chat">
-                <Button variant="outline" className="gap-2">
+              <Button asChild variant="outline" className="gap-2">
+                <Link href="/chat">
                   <ArrowLeft className="size-4" />
-                  Back to Chat
-                </Button>
-              </Link>
+                  Back to chat
+                </Link>
+              </Button>
               <div className="flex gap-2">
                 {activeSection !== "overview" && (
                   <Button
@@ -996,7 +894,7 @@ export default function EEGGuidePage() {
                     }}
                   >
                     <ChevronLeft className="size-4 sm:mr-1" />
-                    <span className="hidden sm:inline">Previous Section</span>
+                    <span className="hidden sm:inline">Previous section</span>
                     <span className="sm:hidden">Prev</span>
                   </Button>
                 )}
@@ -1007,7 +905,7 @@ export default function EEGGuidePage() {
                       if (currentIndex < sections.length - 1) setActiveSection(sections[currentIndex + 1].id)
                     }}
                   >
-                    <span className="hidden sm:inline">Next Section</span>
+                    <span className="hidden sm:inline">Next section</span>
                     <span className="sm:hidden">Next</span>
                     <ChevronRight className="size-4 sm:ml-1" />
                   </Button>
@@ -1028,61 +926,46 @@ interface StepCardProps {
   tips: string[]
   completed: boolean
   onToggle: () => void
-  icon: LucideIcon
 }
 
-function StepCard({ step, title, description, tips, completed, onToggle, icon: Icon }: StepCardProps) {
+function StepCard({ step, title, description, tips, completed, onToggle }: StepCardProps) {
   return (
-    <div className={`relative overflow-hidden rounded-xl border p-4 transition-all duration-200 sm:p-6 ${
-      completed
-        ? "border-accent/40 bg-accent/5 ring-1 ring-accent/15"
-        : "border-border hover:border-accent/30 hover:shadow-sm"
-    }`}>
-      {/* Accent bar marks a completed step */}
-      <div
-        className={`absolute inset-y-0 left-0 w-1 bg-accent transition-opacity ${completed ? "opacity-100" : "opacity-0"}`}
-        aria-hidden
-      />
-      <div className="flex gap-4 sm:gap-5">
-        <button
-          onClick={onToggle}
-          aria-pressed={completed}
-          aria-label={completed ? `Mark step ${step} incomplete` : `Mark step ${step} complete`}
-          className={`flex size-10 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-all hover:scale-105 ${
-            completed
-              ? "border-accent bg-accent text-accent-foreground shadow-sm"
-              : "border-muted-foreground/30 text-muted-foreground hover:border-accent hover:text-accent"
+    <div className="grid grid-cols-[2.5rem_1fr] gap-4 border-t pt-6 sm:grid-cols-[3rem_1fr] sm:gap-5">
+      <button
+        onClick={onToggle}
+        aria-pressed={completed}
+        aria-label={completed ? `Mark step ${step} incomplete` : `Mark step ${step} complete`}
+        className={`flex size-9 items-center justify-center rounded-sm border text-sm transition-colors ${
+          completed
+            ? "border-accent bg-accent text-accent-foreground"
+            : "border-foreground/30 text-muted-foreground hover:border-foreground hover:text-foreground"
+        }`}
+      >
+        {completed ? <Check className="size-4" strokeWidth={2.5} /> : step}
+      </button>
+      <div className="min-w-0">
+        <h3
+          className={`font-serif text-xl tracking-tight sm:text-2xl ${
+            completed ? "text-muted-foreground line-through decoration-1" : ""
           }`}
         >
-          {completed ? <CheckCircle2 className="size-5" /> : step}
-        </button>
-        <div className="min-w-0 flex-1 space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="font-sans text-lg font-semibold sm:text-xl">{title}</h3>
-            {/* Decorative icon — hidden on phones to give text room */}
-            <div
-              className="hidden size-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-accent/10 to-accent/5 text-accent sm:flex"
-              aria-hidden
-            >
-              <Icon className="size-6" strokeWidth={1.5} />
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground sm:text-base">{description}</p>
+          {title}
+        </h3>
+        <p className="mt-2 max-w-2xl leading-relaxed text-muted-foreground">{description}</p>
 
-          {tips.length > 0 && (
-            <div className="space-y-2 pt-2">
-              <p className="text-sm font-medium text-accent">Tips:</p>
-              <ul className="space-y-1">
-                {tips.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <ChevronRight className="mt-0.5 size-4 shrink-0 text-accent" />
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+        {tips.length > 0 && (
+          <div className="mt-4 max-w-2xl rounded-sm bg-muted/60 px-4 py-3">
+            <p className="text-xs font-medium text-muted-foreground">Tips</p>
+            <ul className="mt-2 space-y-1.5">
+              {tips.map((tip, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm">
+                  <span className="mt-[0.7em] h-px w-3 shrink-0 bg-foreground/50" aria-hidden />
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   )

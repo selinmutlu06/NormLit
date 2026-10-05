@@ -54,7 +54,7 @@ export function ContentImage({
         height={height ?? 600}
         priority={priority}
         className={cn(
-          'h-auto w-full rounded-lg',
+          'h-auto w-full',
           objectFit === 'contain' ? 'object-contain' : 'object-cover',
         )}
       />

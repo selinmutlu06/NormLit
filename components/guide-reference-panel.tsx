@@ -1,5 +1,5 @@
 import { ContentImage } from '@/components/content-image'
-import type { MediaKey } from '@/lib/media'
+import { media, type MediaKey } from '@/lib/media'
 import { cn } from '@/lib/utils'
 
 interface GuideReferencePanelProps {
@@ -9,7 +9,7 @@ interface GuideReferencePanelProps {
   className?: string
 }
 
-/** Shared layout for diagrams and photos — kept separate from step cards so steps stay icon-only. */
+/** Shared layout for diagrams and photos, kept separate from step cards so steps stay icon-only. */
 export function GuideReferencePanel({
   title,
   description,
@@ -17,21 +17,21 @@ export function GuideReferencePanel({
   className,
 }: GuideReferencePanelProps) {
   return (
-    <div className={cn('rounded-xl border border-border bg-muted/20 p-4 sm:p-5', className)}>
-      <p className="text-sm font-medium">{title}</p>
-      {description ? (
-        <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-      ) : null}
-      <div className="mt-4 flex justify-center rounded-lg border border-border/60 bg-background/80 p-3">
+    <div className={cn('flex flex-col', className)}>
+      <div className="flex flex-1 items-center justify-center rounded-sm border border-border bg-white p-4">
         <ContentImage
           mediaKey={mediaKey}
           width={480}
           height={360}
           objectFit="contain"
-          showCredit
-          className="max-w-full"
+          className="w-full max-w-md"
         />
       </div>
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+        <span className="font-medium text-foreground">{title}.</span>
+        {description ? ` ${description}` : null}
+        <span className="mt-1 block text-xs">{media[mediaKey].credit}</span>
+      </p>
     </div>
   )
 }
