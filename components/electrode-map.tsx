@@ -100,12 +100,12 @@ const electrodes = [
 
 // Region colors
 const regionColors = {
-  frontal: { bg: "bg-blue-500/20", border: "border-blue-500", text: "text-blue-600 dark:text-blue-400", fill: "#3b82f6" },
-  central: { bg: "bg-green-500/20", border: "border-green-500", text: "text-green-600 dark:text-green-400", fill: "#22c55e" },
-  parietal: { bg: "bg-amber-500/20", border: "border-amber-500", text: "text-amber-600 dark:text-amber-400", fill: "#f59e0b" },
-  temporal: { bg: "bg-purple-500/20", border: "border-purple-500", text: "text-purple-600 dark:text-purple-400", fill: "#a855f7" },
-  occipital: { bg: "bg-rose-500/20", border: "border-rose-500", text: "text-rose-600 dark:text-rose-400", fill: "#f43f5e" },
-  reference: { bg: "bg-gray-500/20", border: "border-gray-500", text: "text-gray-600 dark:text-gray-400", fill: "#6b7280" },
+  frontal: { fill: "var(--chart-1)" },
+  central: { fill: "var(--chart-3)" },
+  parietal: { fill: "var(--chart-2)" },
+  temporal: { fill: "var(--chart-4)" },
+  occipital: { fill: "var(--chart-5)" },
+  reference: { fill: "var(--muted-foreground)" },
 }
 
 /** Core 10-20 positions for training — avoids cluttering the map with 10-10 extensions */
@@ -167,10 +167,7 @@ export function ElectrodeMap({
           <div
             key={region}
             className={cn(
-              "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium capitalize transition-opacity",
-              colors.bg,
-              colors.border,
-              colors.text,
+              "flex items-center gap-1.5 px-1 py-0.5 text-xs capitalize text-muted-foreground transition-opacity",
               highlightedRegion && highlightedRegion !== region && "opacity-40",
             )}
           >
@@ -240,7 +237,7 @@ export function ElectrodeMap({
                   onMouseLeave={() => setHoveredElectrode(null)}
                   style={{ 
                     opacity: isHighlighted ? 1 : 0.3,
-                    transform: isHovered || isSelected ? 'scale(1.2)' : 'scale(1)',
+                    transform: isHovered || isSelected ? 'scale(1.12)' : 'scale(1)',
                     transformOrigin: `${electrode.x}% ${electrode.y}%`
                   }}
                 >
@@ -248,10 +245,10 @@ export function ElectrodeMap({
                   <circle
                     cx={electrode.x}
                     cy={electrode.y}
-                    r={(electrodeSizes[mapSize].r * dotScale) / 10}
-                    fill={colors.fill}
-                    stroke={isSelected ? "#fff" : "transparent"}
-                    strokeWidth={isSelected ? 0.3 : 0}
+                    r={isGuide ? 3.6 : (electrodeSizes[mapSize].r * dotScale) / 10}
+                    fill={isSelected ? colors.fill : "var(--card)"}
+                    stroke={colors.fill}
+                    strokeWidth={isGuide ? 0.5 : 0.45}
                     className="transition-all duration-200"
                   />
                   
@@ -262,11 +259,10 @@ export function ElectrodeMap({
                       y={electrode.y}
                       textAnchor="middle"
                       dominantBaseline="central"
-                      fontSize={electrodeSizes[mapSize].fontSize / 10}
+                      fontSize={isGuide ? 2.3 : electrodeSizes[mapSize].fontSize / 10}
                       fontWeight="500"
-                      fill="#fff"
+                      fill={isSelected ? "var(--card)" : "var(--foreground)"}
                       className="pointer-events-none select-none font-mono"
-                      style={{ textShadow: '0 0 2px rgba(0,0,0,0.5)' }}
                     >
                       {electrode.id}
                     </text>
@@ -279,7 +275,7 @@ export function ElectrodeMap({
           {/* Hover tooltip */}
           {hoveredElectrode && (
             <div 
-              className="absolute z-10 px-3 py-2 bg-popover border border-border rounded-lg shadow-lg text-sm pointer-events-none"
+              className="absolute z-10 px-3 py-2 bg-popover border border-border rounded-sm text-sm pointer-events-none"
               style={{
                 left: `${hoveredElectrode.x}%`,
                 top: `${hoveredElectrode.y}%`,
@@ -295,23 +291,20 @@ export function ElectrodeMap({
         {/* Info Panel */}
         <div className={cn("w-full space-y-4", !isGuide && "lg:w-72")}>
           {selectedElectrode ? (
-            <div className="rounded-lg border border-border bg-card space-y-2 p-4">
+            <div className="rounded-sm border border-border bg-card space-y-2 p-4">
               <div className="flex items-center justify-between">
                 <span
-                  className={cn(
-                    "font-mono text-xl font-bold",
-                    regionColors[selectedElectrode.region as keyof typeof regionColors].text,
-                  )}
+                  className="font-mono text-xl font-medium"
                 >
                   {selectedElectrode.id}
                 </span>
                 <span
-                  className={cn(
-                    "rounded-full px-2 py-1 text-xs font-medium capitalize",
-                    regionColors[selectedElectrode.region as keyof typeof regionColors].bg,
-                    regionColors[selectedElectrode.region as keyof typeof regionColors].text,
-                  )}
+                  className="flex items-center gap-1.5 text-xs capitalize text-muted-foreground"
                 >
+                  <span
+                    className="size-2 rounded-full"
+                    style={{ backgroundColor: regionColors[selectedElectrode.region as keyof typeof regionColors].fill }}
+                  />
                   {selectedElectrode.region}
                 </span>
               </div>
@@ -341,7 +334,7 @@ export function ElectrodeMap({
           )}
 
           {!isGuide && (
-            <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+            <div className="space-y-3 rounded-sm border border-border bg-card p-4">
               <h4 className="text-sm font-medium">Electrode Naming Convention</h4>
               <div className="space-y-2 text-xs text-muted-foreground">
                 <div className="flex items-start gap-2">

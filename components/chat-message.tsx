@@ -1,8 +1,6 @@
 "use client"
 
 import { UIMessage } from "ai"
-import { User, Sparkles } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 interface ChatMessageProps {
   message: UIMessage
@@ -17,32 +15,19 @@ export function ChatMessage({ message }: ChatMessageProps) {
     .map((part) => part.text)
     .join("")
 
+  if (isUser) {
+    return (
+      <div className="border-t pb-3 pt-8 first:border-t-0 first:pt-0">
+        <p className="font-mono text-xs text-muted-foreground">You asked</p>
+        <p className="mt-1.5 whitespace-pre-wrap font-serif text-2xl leading-snug tracking-tight">{textContent}</p>
+      </div>
+    )
+  }
+
   return (
-    <div className={cn("flex gap-3.5", isUser ? "flex-row-reverse" : "flex-row")}>
-      <div
-        className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-full shadow-sm",
-          isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-gradient-to-br from-primary to-accent text-primary-foreground",
-        )}
-      >
-        {isUser ? <User className="size-4" /> : <Sparkles className="size-4" />}
-      </div>
-      <div className={cn("flex-1 space-y-2 overflow-hidden", isUser ? "text-right" : "text-left")}>
-        <div
-          className={cn(
-            "inline-block max-w-full rounded-2xl px-4 py-3 text-left shadow-sm",
-            isUser
-              ? "rounded-tr-sm bg-primary text-primary-foreground"
-              : "rounded-tl-sm border bg-card text-foreground",
-          )}
-        >
-          <div className="prose prose-sm max-w-none dark:prose-invert">
-            <MessageContent content={textContent || ""} />
-          </div>
-        </div>
-      </div>
+    <div className="pb-8 pt-3 text-[15px] leading-relaxed">
+      <p className="mb-2 font-mono text-xs text-muted-foreground">NormLit</p>
+      <MessageContent content={textContent || ""} />
     </div>
   )
 }
@@ -103,7 +88,7 @@ function renderInline(text: string): React.ReactNode[] {
     }
     if (/^`[^`]+`$/.test(seg)) {
       return (
-        <code key={i} className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.85em]">
+        <code key={i} className="rounded-sm bg-muted px-1 py-0.5 font-mono text-[0.85em]">
           {seg.slice(1, -1)}
         </code>
       )
@@ -112,9 +97,9 @@ function renderInline(text: string): React.ReactNode[] {
       return (
         <span
           key={i}
-          className="mx-0.5 inline-flex items-center rounded-md bg-accent/15 px-1.5 py-0.5 align-baseline text-[0.8em] font-medium text-accent ring-1 ring-inset ring-accent/25"
+          className="whitespace-nowrap text-[0.9em] text-accent"
         >
-          {seg.slice(1, -1)}
+          {seg}
         </span>
       )
     }

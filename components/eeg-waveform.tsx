@@ -67,6 +67,7 @@ function WaveformPath({
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
+      vectorEffect="non-scaling-stroke"
     />
   )
 }
@@ -99,15 +100,15 @@ export function EEGWaveform({
     <div 
       ref={containerRef}
       className={cn(
-        "relative overflow-hidden rounded-md border border-border bg-card",
+        "relative overflow-hidden bg-card",
         className
       )}
     >
       {/* Time scale header */}
-      <div className="flex items-center justify-between border-b border-border bg-muted/50 px-3 py-1.5">
-        <span className="font-mono text-xs text-muted-foreground">EEG Signal</span>
+      <div className="flex items-center justify-between border-b border-border px-3 py-1.5">
+        <span className="font-mono text-xs text-muted-foreground">EEG</span>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-xs text-muted-foreground">10 uV/div</span>
+          <span className="font-mono text-xs text-muted-foreground">10 µV/div</span>
           <span className="font-mono text-xs text-muted-foreground">1 sec</span>
         </div>
       </div>
@@ -147,7 +148,7 @@ export function EEGWaveform({
         </svg>
 
         {/* Channel labels */}
-        <div className="absolute left-0 top-0 bottom-0 w-10 flex flex-col border-r border-border bg-card/80 backdrop-blur-sm z-10">
+        <div className="absolute left-0 top-0 bottom-0 w-10 flex flex-col border-r border-border bg-card z-10">
           {labels.slice(0, channels).map((label, i) => (
             <div 
               key={label}
@@ -171,19 +172,21 @@ export function EEGWaveform({
               <g key={i} transform={`translate(0, ${i * channelHeight})`}>
                 <WaveformPath
                   data={data}
-                  width={animated ? 800 : 400}
+                  width={animated ? 400 : 800}
                   height={channelHeight}
                   color={colors[i % colors.length]}
-                  strokeWidth={compact ? 1 : 1.5}
+                  strokeWidth={compact ? 0.75 : 1}
                 />
                 {animated && (
+                  <g transform="translate(400, 0)">
                   <WaveformPath
                     data={data}
                     width={400}
                     height={channelHeight}
                     color={colors[i % colors.length]}
-                    strokeWidth={compact ? 1 : 1.5}
+                    strokeWidth={compact ? 0.75 : 1}
                   />
+                  </g>
                 )}
               </g>
             ))}
@@ -192,92 +195,9 @@ export function EEGWaveform({
       </div>
 
       {/* Status bar */}
-      <div className="flex items-center justify-between border-t border-border bg-muted/50 px-3 py-1">
-        <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-chart-1 animate-pulse" />
-          <span className="font-mono text-xs text-muted-foreground">Live</span>
-        </div>
-        <span className="font-mono text-xs text-muted-foreground">256 Hz</span>
+      <div className="flex items-center justify-between border-t border-border px-3 py-1">
+        <span className="font-mono text-xs text-muted-foreground">Illustrative signal</span>
       </div>
-    </div>
-  )
-}
-
-// Compact inline waveform for cards
-export function InlineWaveform({ 
-  className,
-  color = "var(--eeg-alpha)"
-}: { 
-  className?: string
-  color?: string
-}) {
-  const data = useMemo(() => generateWaveformData(50, 2), [])
-  
-  return (
-    <svg 
-      className={cn("w-full h-6", className)}
-      viewBox="0 0 100 24"
-      preserveAspectRatio="none"
-    >
-      <WaveformPath
-        data={data}
-        width={100}
-        height={24}
-        color={color}
-        strokeWidth={1}
-      />
-    </svg>
-  )
-}
-
-// Brain topographic map placeholder
-export function BrainTopoMap({ className }: { className?: string }) {
-  return (
-    <div className={cn("relative aspect-square", className)}>
-      <svg viewBox="0 0 100 100" className="w-full h-full">
-        {/* Head outline */}
-        <ellipse 
-          cx="50" cy="50" rx="45" ry="48" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="1.5"
-          className="text-border"
-        />
-        {/* Nose indicator */}
-        <path 
-          d="M 50 2 L 54 10 L 46 10 Z" 
-          fill="currentColor" 
-          className="text-border"
-        />
-        {/* Electrode positions */}
-        {[
-          { x: 50, y: 20, label: "Fz", color: "var(--eeg-alpha)" },
-          { x: 50, y: 50, label: "Cz", color: "var(--eeg-beta)" },
-          { x: 50, y: 80, label: "Pz", color: "var(--eeg-theta)" },
-          { x: 20, y: 50, label: "C3", color: "var(--eeg-delta)" },
-          { x: 80, y: 50, label: "C4", color: "var(--eeg-alpha)" },
-          { x: 30, y: 30, label: "F3", color: "var(--eeg-beta)" },
-          { x: 70, y: 30, label: "F4", color: "var(--eeg-theta)" },
-          { x: 30, y: 70, label: "P3", color: "var(--eeg-delta)" },
-          { x: 70, y: 70, label: "P4", color: "var(--eeg-alpha)" },
-        ].map(({ x, y, label, color }) => (
-          <g key={label}>
-            <circle 
-              cx={x} cy={y} r="6" 
-              fill={color}
-              opacity="0.8"
-            />
-            <text 
-              x={x} y={y + 1} 
-              textAnchor="middle" 
-              dominantBaseline="middle"
-              className="fill-background text-[6px] font-mono font-bold"
-            >
-              {label}
-            </text>
-          </g>
-        ))}
-      </svg>
     </div>
   )
 }

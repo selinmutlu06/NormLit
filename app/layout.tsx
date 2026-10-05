@@ -1,15 +1,25 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono, Source_Serif_4 } from 'next/font/google'
+import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
-const sourceSerif = Source_Serif_4({
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-source-serif",
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-sans",
+  display: "swap",
+});
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
+  display: "swap",
+});
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-newsreader",
   display: "swap",
 });
 
@@ -40,16 +50,9 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable}`}
+      className={`${plexSans.variable} ${plexMono.variable} ${newsreader.variable}`}
     >
       <body className="font-sans antialiased">
-        {/* Enable scroll-reveal only when JS is present, so content never
-            stays hidden if JS is disabled or fails. Runs before paint. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('reveal-ready')`,
-          }}
-        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

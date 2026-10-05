@@ -1,427 +1,257 @@
 import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 import { ContentImage } from "@/components/content-image"
-import {
-  ArrowRight,
-  BookOpen,
-  MessageSquare,
-  GitCompare,
-  Search,
-  Brain,
-  Activity,
-  FileText,
-  Database,
-  Zap,
-  Sparkles,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { EEGWaveform, BrainTopoMap, InlineWaveform } from "@/components/eeg-waveform"
-import { Reveal } from "@/components/reveal"
+import { ERPFigure } from "@/components/erp-figure"
+import { SiteFooter, SiteHeader } from "@/components/site-chrome"
+
+const FEATURES = [
+  {
+    title: "Chat with your papers",
+    body: "Ask questions in plain language. Answers are synthesized from the papers you uploaded, with an inline citation for every claim.",
+  },
+  {
+    title: "Search by meaning",
+    body: "Find the passage that answers your question even when it uses different words. Narrow by year, author, or a hand-picked set of papers.",
+  },
+  {
+    title: "Compare studies",
+    body: "Select two or more papers and lay their methods, results, and contradictions side by side.",
+  },
+]
+
+const METHOD = [
+  {
+    title: "Ingest",
+    body: "PDFs are parsed, split into overlapping chunks, and embedded.",
+    stack: "pdf-parse · OpenAI embeddings",
+  },
+  {
+    title: "Retrieve",
+    body: "Your question is embedded and matched against every chunk by cosine similarity.",
+    stack: "Supabase · pgvector",
+  },
+  {
+    title: "Answer",
+    body: "The model writes from the retrieved passages only, citing author and year as it goes.",
+    stack: "Claude",
+  },
+]
+
+const COVERAGE = [
+  { title: "EEG", body: "Event-related potentials, oscillations, connectivity" },
+  { title: "fMRI", body: "BOLD imaging, resting state, task-based designs" },
+  { title: "Behavioral", body: "Cognitive tasks, reaction times, accuracy" },
+  { title: "Reviews", body: "Meta-analyses, systematic reviews, theory" },
+]
+
+const PROTOCOL = ["Overview", "Participant preparation", "Cap setup", "Gel application", "Recording", "Cleanup"]
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
-          <Link href="/" className="group flex items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-sm transition-transform group-hover:scale-105">
-              <Brain className="size-5 text-primary-foreground" />
-            </span>
-            <span className="font-sans text-xl font-semibold tracking-tight">NormLit</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <nav className="hidden items-center gap-6 text-sm md:flex">
-              <Link href="/eeg-guide" className="text-muted-foreground transition-colors hover:text-foreground">
-                EEG Guide
-              </Link>
-              <Link href="#features" className="text-muted-foreground transition-colors hover:text-foreground">
-                Features
-              </Link>
-              <Link href="#how" className="text-muted-foreground transition-colors hover:text-foreground">
-                How it works
-              </Link>
-            </nav>
-            <ThemeToggle />
-            <Button asChild className="shadow-sm">
-              <Link href="/chat">
-                Open App
-                <ArrowRight className="ml-2 size-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden border-b">
-          <div className="aurora" aria-hidden />
-          <div className="absolute inset-0 bg-grid-fade opacity-60" aria-hidden />
-
-          <div className="relative mx-auto max-w-6xl px-6 py-24 lg:py-32">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              <Reveal>
-                <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-                  Research literature,
-                  <br />
-                  <span className="text-gradient">answered with citations</span>
-                </h1>
-                <p className="mt-6 max-w-lg text-pretty text-lg leading-relaxed text-muted-foreground">
-                  Ask questions across your paper library, compare findings between EEG studies,
-                  and get answers grounded in the literature, with every claim traceable to its source.
-                </p>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Button asChild size="lg" className="glow-accent">
-                    <Link href="/chat">
-                      Start exploring
-                      <ArrowRight className="ml-2 size-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" size="lg" className="backdrop-blur-sm">
-                    <Link href="#features">View features</Link>
-                  </Button>
-                </div>
-                <dl className="mt-10 grid max-w-md grid-cols-3 gap-6 border-t pt-6">
-                  {[
-                    { value: "RAG", label: "Grounded answers" },
-                    { value: "10-20", label: "EEG protocol" },
-                    { value: "pgvector", label: "Semantic search" },
-                  ].map(({ value, label }) => (
-                    <div key={label}>
-                      <dt className="font-mono text-lg font-semibold text-foreground">{value}</dt>
-                      <dd className="mt-0.5 text-xs text-muted-foreground">{label}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </Reveal>
-
-              {/* Hero visual */}
-              <Reveal delay={120}>
-                <div className="space-y-4 lg:pl-4">
-                  <div className="animate-float">
-                    <EEGWaveform channels={4} animated className="shadow-xl" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="card-interactive rounded-xl border bg-card p-3.5 shadow-sm">
-                      <div className="flex items-center gap-2">
-                        <FileText className="size-4 text-chart-1" />
-                        <span className="font-mono text-xs text-muted-foreground">Your library</span>
-                      </div>
-                      <p className="mt-1 text-sm text-muted-foreground">Upload PDFs to build your corpus</p>
-                    </div>
-                    <div className="card-interactive rounded-xl border bg-card p-3.5 shadow-sm">
-                      <div className="flex items-center gap-2">
-                        <Database className="size-4 text-chart-2" />
-                        <span className="font-mono text-xs text-muted-foreground">Semantic search</span>
-                      </div>
-                      <p className="mt-1 text-sm text-muted-foreground">Cited answers from your papers</p>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* Features */}
-        <section id="features" className="border-b">
-          <div className="mx-auto max-w-6xl px-6 py-20 lg:py-28">
-            <Reveal className="mx-auto mb-16 max-w-2xl text-center">
-              <p className="mb-2 font-mono text-sm uppercase tracking-wider text-accent">Features</p>
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                Accelerate your research
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                NormLit grounds every answer in your paper library, providing citations and letting
-                you trace claims back to their source.
-              </p>
-            </Reveal>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  icon: <MessageSquare className="size-5" />,
-                  title: "Chat with papers",
-                  description:
-                    "Ask questions in natural language and get answers synthesized from your entire library with inline citations.",
-                  color: "var(--chart-1)",
-                },
-                {
-                  icon: <Search className="size-5" />,
-                  title: "Semantic search",
-                  description:
-                    "Find relevant passages across all your papers by meaning, not just keywords. Filter by year or specific papers.",
-                  color: "var(--chart-2)",
-                },
-                {
-                  icon: <GitCompare className="size-5" />,
-                  title: "Compare findings",
-                  description:
-                    "Select multiple papers and ask the AI to compare methodologies, findings, or highlight contradictions.",
-                  color: "var(--chart-3)",
-                },
-              ].map((card, i) => (
-                <Reveal key={card.title} delay={i * 100}>
-                  <FeatureCard {...card} />
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Methodology */}
-        <section id="how" className="border-b bg-muted/30">
-          <div className="mx-auto max-w-6xl px-6 py-20 lg:py-28">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              <Reveal>
-                <p className="mb-2 font-mono text-sm uppercase tracking-wider text-accent">How it works</p>
-                <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                  Retrieval-augmented generation
-                </h2>
-                <p className="mt-4 text-muted-foreground">
-                  Every answer is grounded in your actual papers using vector similarity search and
-                  semantic embeddings.
-                </p>
-
-                <div className="mt-8 space-y-2">
-                  <StepItem
-                    number="01"
-                    title="Ingest & embed"
-                    description="PDFs are chunked and converted to vector embeddings using OpenAI, stored in Supabase with pgvector."
-                  />
-                  <StepItem
-                    number="02"
-                    title="Semantic retrieval"
-                    description="Your questions are embedded and matched against the paper chunks using cosine similarity."
-                  />
-                  <StepItem
-                    number="03"
-                    title="Synthesize & cite"
-                    description="The model generates answers using retrieved context, with citations to specific papers."
-                    last
-                  />
-                </div>
-              </Reveal>
-
-              <Reveal delay={120}>
-                <div className="spotlight-border card-interactive rounded-2xl border bg-card p-6 shadow-lg">
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="font-mono text-xs text-muted-foreground">Electrode montage</span>
-                    <span className="font-mono text-xs text-accent">10-20 System</span>
-                  </div>
-                  <BrainTopoMap className="mx-auto h-48 w-48" />
-                  <div className="mt-4 grid grid-cols-4 gap-2 text-center">
-                    {[
-                      { band: "Delta", hz: "0.5-4", color: "bg-eeg-delta" },
-                      { band: "Theta", hz: "4-8", color: "bg-eeg-theta" },
-                      { band: "Alpha", hz: "8-13", color: "bg-eeg-alpha" },
-                      { band: "Beta", hz: "13-30", color: "bg-eeg-beta" },
-                    ].map(({ band, hz, color }) => (
-                      <div key={band}>
-                        <div className={`mx-auto mb-1 size-3 rounded-full ${color}`} />
-                        <p className="font-mono text-xs font-medium text-foreground">{band}</p>
-                        <p className="font-mono text-[10px] text-muted-foreground">{hz} Hz</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* Paper types */}
         <section className="border-b">
-          <div className="mx-auto max-w-6xl px-6 py-20 lg:py-28">
-            <Reveal className="mb-12 text-center">
-              <p className="mb-2 font-mono text-sm uppercase tracking-wider text-accent">Supported research</p>
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                All your neuroscience literature
-              </h2>
-            </Reveal>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {[
-                { title: "EEG studies", icon: Activity, desc: "Event-related potentials, oscillations, connectivity" },
-                { title: "fMRI research", icon: Brain, desc: "BOLD imaging, resting state, task-based" },
-                { title: "Behavioral", icon: FileText, desc: "Cognitive tasks, reaction times, accuracy" },
-                { title: "Reviews", icon: BookOpen, desc: "Meta-analyses, systematic reviews, theories" },
-              ].map(({ title, icon: Icon, desc }, i) => (
-                <Reveal key={title} delay={i * 80}>
-                  <div className="card-interactive group h-full rounded-xl border bg-card p-5">
-                    <div className="flex size-10 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
-                      <Icon className="size-5" />
-                    </div>
-                    <h3 className="mt-4 font-semibold text-foreground">{title}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* EEG Guide */}
-        <section className="border-b bg-muted/30">
-          <div className="mx-auto max-w-6xl px-6 py-20 lg:py-28">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              <Reveal className="order-2 space-y-4 lg:order-1">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border shadow-lg">
-                  <ContentImage mediaKey="eeg1020" fill className="absolute inset-0 bg-muted/30 object-contain p-4" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div className="flex items-center gap-2 text-sm text-foreground">
-                      <Zap className="size-4 text-accent" />
-                      <span className="font-medium">Interactive protocol guide</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl border bg-card p-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-accent/10">
-                    <Activity className="size-5 text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">10-20 electrode system</p>
-                    <p className="font-mono text-sm font-semibold">Standard EEG montage</p>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={120} className="order-1 lg:order-2">
-                <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                  Complete EEG study guide
-                </h2>
-                <p className="mt-4 text-muted-foreground">
-                  A comprehensive, step-by-step protocol for conducting EEG studies with the BioSemi
-                  ActiveTwo system. From participant preparation to cleanup.
-                </p>
-
-                <ul className="mt-6 space-y-3">
-                  {[
-                    "Cap setup and electrode placement",
-                    "Gel application and impedance checking",
-                    "Recording best practices",
-                    "Artifact troubleshooting",
-                    "Post-session cleanup protocols",
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-3">
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
-                        <Sparkles className="size-3" />
-                      </span>
-                      <span className="text-sm text-muted-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-8">
-                  <Button asChild size="lg">
-                    <Link href="/eeg-guide">
-                      View EEG guide
-                      <ArrowRight className="ml-2 size-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="relative overflow-hidden">
-          <div className="aurora" aria-hidden />
-          <div className="absolute inset-0 bg-grid-fade opacity-40" aria-hidden />
-          <div className="relative mx-auto max-w-6xl px-6 py-24 lg:py-28">
-            <Reveal className="mx-auto max-w-2xl text-center">
-              <h2 className="text-balance text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                Ready to explore your literature?
-              </h2>
-              <p className="mt-4 text-muted-foreground">
-                Start chatting with your papers today. Drop PDFs in the chat sidebar and get cited
-                answers powered by Claude Opus 4.8.
+          <div className="mx-auto grid max-w-6xl gap-14 px-6 pb-20 pt-16 lg:grid-cols-12 lg:gap-10 lg:pb-24 lg:pt-24">
+            <div className="lg:col-span-6">
+              <p className="text-sm text-muted-foreground">A research assistant for cognitive neuroscience labs</p>
+              <h1 className="mt-6 font-serif text-[2.75rem] font-normal leading-[1.04] tracking-[-0.02em] text-foreground sm:text-6xl lg:text-[4.1rem]">
+                Ask your library a question. Get an answer you can <em className="text-accent">cite.</em>
+              </h1>
+              <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground">
+                NormLit reads the papers you upload and answers across all of them, tying each claim back to the
+                study it came from. Compare methods, surface contradictions, and keep your EEG protocol one click away.
               </p>
-              <div className="mt-8">
-                <Button asChild size="lg" className="glow-accent">
-                  <Link href="/chat">
-                    Open NormLit
-                    <ArrowRight className="ml-2 size-4" />
-                  </Link>
-                </Button>
+              <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+                <Link
+                  href="/chat"
+                  className="group inline-flex h-11 items-center gap-2 rounded-sm bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-opacity hover:opacity-85"
+                >
+                  Open NormLit
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+                <Link
+                  href="/eeg-guide"
+                  className="text-[15px] text-foreground underline decoration-foreground/30 underline-offset-[6px] transition-colors hover:decoration-accent"
+                >
+                  Read the EEG protocol
+                </Link>
               </div>
-            </Reveal>
+            </div>
+
+            <figure className="lg:col-span-6 lg:pl-6">
+              <div className="rounded-sm border bg-card p-4 sm:p-6">
+                <ERPFigure />
+              </div>
+              <figcaption className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <span className="font-medium text-foreground">Fig. 1.</span> Grand-average ERP at Cz for
+                norm-consistent and norm-violating sentences. Illustrative waveform; negative is plotted up.
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        {/* 1. Features */}
+        <section id="features" className="scroll-mt-14 border-b">
+          <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-12 lg:py-28">
+            <SectionHeading number="1" title="What it does" className="lg:col-span-4" />
+            <div className="lg:col-span-8">
+              <ol className="divide-y border-y">
+                {FEATURES.map((f, i) => (
+                  <li key={f.title} className="grid gap-2 py-7 sm:grid-cols-[3rem_1fr] sm:gap-6">
+                    <span className="font-mono text-sm text-muted-foreground">1.{i + 1}</span>
+                    <div>
+                      <h3 className="font-serif text-2xl font-normal tracking-tight">{f.title}</h3>
+                      <p className="mt-2 max-w-xl leading-relaxed text-muted-foreground">{f.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+
+              <figure className="mt-14">
+                <div className="rounded-sm border bg-card">
+                  <div className="border-b px-5 py-4 sm:px-7">
+                    <p className="font-mono text-xs text-muted-foreground">Question</p>
+                    <p className="mt-1.5 font-serif text-xl">What does the N400 index during sentence comprehension?</p>
+                  </div>
+                  <div className="px-5 py-5 sm:px-7">
+                    <p className="font-mono text-xs text-muted-foreground">Answer</p>
+                    <p className="mt-1.5 leading-relaxed">
+                      Most accounts treat the N400 as a marker of meaning access: its amplitude grows when a word is
+                      harder to integrate with the preceding context <Cite>Kutas &amp; Federmeier, 2011</Cite>. In the
+                      original work, semantically anomalous sentence endings produced a larger negativity peaking near
+                      400 ms than expected endings <Cite>Kutas &amp; Hillyard, 1980</Cite>.
+                    </p>
+                  </div>
+                </div>
+                <figcaption className="mt-3 text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Fig. 2.</span> An answer with inline citations.
+                  Illustrative example.
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. Method */}
+        <section id="method" className="scroll-mt-14 border-b bg-card">
+          <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-12 lg:py-28">
+            <div className="lg:col-span-4">
+              <SectionHeading number="2" title="Method" />
+              <p className="mt-5 max-w-sm leading-relaxed text-muted-foreground">
+                Retrieval-augmented generation. The model only sees passages pulled from your library, so every
+                answer can be traced to a source.
+              </p>
+            </div>
+            <ol className="lg:col-span-8">
+              {METHOD.map((step, i) => (
+                <li
+                  key={step.title}
+                  className="grid gap-2 border-t py-7 last:border-b sm:grid-cols-[3rem_1fr_auto] sm:items-baseline sm:gap-6"
+                >
+                  <span className="font-mono text-sm text-muted-foreground">0{i + 1}</span>
+                  <div>
+                    <h3 className="font-serif text-2xl font-normal tracking-tight">{step.title}</h3>
+                    <p className="mt-2 max-w-md leading-relaxed text-muted-foreground">{step.body}</p>
+                  </div>
+                  <span className="font-mono text-xs text-muted-foreground sm:text-right">{step.stack}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* 3. Coverage */}
+        <section className="border-b">
+          <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-12 lg:py-28">
+            <SectionHeading number="3" title="Built for the literature you read" className="lg:col-span-4" />
+            <dl className="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:col-span-8">
+              {COVERAGE.map((c) => (
+                <div key={c.title} className="border-t pt-4">
+                  <dt className="font-serif text-2xl tracking-tight">{c.title}</dt>
+                  <dd className="mt-1.5 text-muted-foreground">{c.body}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* 4. EEG protocol */}
+        <section className="border-b">
+          <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-12 lg:py-28">
+            <div className="lg:col-span-5">
+              <SectionHeading number="4" title="The EEG protocol, written down" />
+              <p className="mt-5 leading-relaxed text-muted-foreground">
+                A step-by-step guide to running a session on the BioSemi ActiveTwo, condensed from a hundred-page lab
+                packet. Check off steps as you go.
+              </p>
+              <ol className="mt-8 border-t">
+                {PROTOCOL.map((item, i) => (
+                  <li key={item} className="flex items-baseline gap-4 border-b py-2.5 text-[15px]">
+                    <span className="w-6 font-mono text-xs text-muted-foreground">{toRoman(i + 1)}</span>
+                    {item}
+                  </li>
+                ))}
+              </ol>
+              <Link
+                href="/eeg-guide"
+                className="group mt-8 inline-flex items-center gap-2 text-[15px] font-medium underline decoration-foreground/30 underline-offset-[6px] hover:decoration-accent"
+              >
+                Open the protocol
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+            <figure className="lg:col-span-6 lg:col-start-7">
+              <div className="relative aspect-square rounded-sm border bg-white">
+                <ContentImage mediaKey="eeg1020" fill objectFit="contain" className="absolute inset-0 m-6" />
+              </div>
+              <figcaption className="mt-3 text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">Fig. 3.</span> The international 10–20 electrode
+                system. Wikimedia Commons, public domain.
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        {/* Closing */}
+        <section>
+          <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-20 sm:flex-row sm:items-end sm:justify-between lg:py-24">
+            <h2 className="max-w-xl font-serif text-4xl font-normal leading-tight tracking-tight sm:text-5xl">
+              Start with one paper.
+            </h2>
+            <Link
+              href="/chat"
+              className="group inline-flex h-11 w-fit items-center gap-2 rounded-sm bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-opacity hover:opacity-85"
+            >
+              Upload a PDF
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t bg-card/50">
-        <div className="mx-auto max-w-6xl px-6 py-8">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-2">
-              <span className="flex size-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent">
-                <Brain className="size-4 text-primary-foreground" />
-              </span>
-              <span className="text-sm text-muted-foreground">NormLit</span>
-            </div>
-            <p className="font-mono text-xs text-muted-foreground">
-              Built for cognitive neuroscience research
-            </p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }
 
-function FeatureCard({
-  icon,
-  title,
-  description,
-  color,
-}: {
-  icon: React.ReactNode
-  title: string
-  description: string
-  color: string
-}) {
+function SectionHeading({ number, title, className }: { number: string; title: string; className?: string }) {
   return (
-    <div className="spotlight-border card-interactive h-full rounded-2xl border bg-card p-6">
-      <div
-        className="flex size-11 items-center justify-center rounded-xl text-accent"
-        style={{ backgroundColor: `color-mix(in oklch, ${color} 14%, transparent)`, color }}
-      >
-        {icon}
+    <div className={className}>
+      <div className="rule-lead pt-4">
+        <span className="font-mono text-xs text-muted-foreground">§{number}</span>
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-foreground">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
-      <InlineWaveform color={color} className="mt-4 opacity-60" />
+      <h2 className="mt-3 font-serif text-3xl font-normal leading-tight tracking-tight sm:text-4xl">{title}</h2>
     </div>
   )
 }
 
-function StepItem({
-  number,
-  title,
-  description,
-  last,
-}: {
-  number: string
-  title: string
-  description: string
-  last?: boolean
-}) {
-  return (
-    <div className="flex gap-4">
-      <div className="flex flex-col items-center">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-card font-mono text-sm font-medium text-accent">
-          {number}
-        </div>
-        {!last && <div className="mt-1 w-px flex-1 bg-gradient-to-b from-border to-transparent" />}
-      </div>
-      <div className="pb-6">
-        <h3 className="font-semibold text-foreground">{title}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-      </div>
-    </div>
-  )
+function Cite({ children }: { children: React.ReactNode }) {
+  return <span className="whitespace-nowrap text-[0.9em] text-accent">[{children}]</span>
+}
+
+function toRoman(n: number) {
+  return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"][n - 1]
 }
