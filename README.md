@@ -1,69 +1,95 @@
 # NormLit
 
-Research literature intelligence for cognitive neuroscience labs. Chat with your paper library, get cited answers, compare findings across studies. Live at [v0-normlit-research-assistant-djiy.vercel.app](https://v0-normlit-research-assistant-djiy.vercel.app/).
+NormLit lets a research lab chat with its own library of papers. You upload PDFs, ask questions in plain English, and every answer cites the exact paper it came from. It's live at [normlit on Vercel](https://v0-normlit-research-assistant-djiy.vercel.app/).
 
-In a cognitive neuroscience lab, literature review is brutal. You cross-reference dozens of papers by hand. You hunt for the one paragraph that answers your question. You parse hundred-page equipment manuals just to run a single EEG session. The science is fascinating. The paperwork is not.
-
-NormLit is the tool I wished my team had.
-
-<br>
+<img src="docs/images/app-landing.png" alt="NormLit landing page with an N400 waveform comparing norm-violating and norm-consistent sentences" width="100%" />
 
 ## Where it started
 
-I built NormLit during Duke's Cognitive Neuroscience Research Internship (CNRI), where I ran EEG research on how the brain processes social norm violations using the N400 ERP component. Watching my team burn hours manually cross-referencing literature and parsing a 100-page EEG instruction packet, I wanted to build something that made that grind disappear.
+I built NormLit during Duke's Cognitive Neuroscience Research Internship (CNRI), where I ran EEG research on how the brain responds when a sentence breaks a social norm, using the N400 brain response. A lot of my team's time went to things that weren't the science itself, like cross-referencing dozens of papers by hand to find the one paragraph that answered a question, and working through a 100-page instruction packet just to run a single EEG session. I wanted to build something that gave that time back.
 
-NormLit uses RAG and vector embeddings to ground every answer in your uploaded papers, with inline citations you can trace back to the source.
+<img src="docs/images/cnri-lab-setup.png" alt="Setting up the BioSemi ActiveTwo EEG system during CNRI" width="100%" />
 
-**Fig. 1. The lab.** Setting up the BioSemi ActiveTwo during CNRI, the work that inspired NormLit.
+<img src="docs/images/cnri-research-poster.png" alt="CNRI research poster on social and masculinity norms" width="100%" />
 
-<img src="docs/images/cnri-lab-setup.png" alt="EEG lab setup at Duke CNRI, BioSemi ActiveTwo system" width="100%" />
+## What you can do with it
 
-**Fig. 2. The research.** CNRI poster on social and masculinity norms.
+You drop PDFs into the sidebar and NormLit splits them into passages and indexes them. When you ask a question, it finds the passages that match what you mean, even if they use different words, and writes an answer where every claim is tagged with the paper and year it came from, so you can always go back and check. You can narrow a question to specific papers, or pick two or more and ask NormLit to compare their methods and results side by side.
 
-<img src="docs/images/cnri-research-poster.png" alt="CNRI research poster on social and masculinity norms EEG study" width="100%" />
+<img src="docs/images/app-chat.png" alt="NormLit chat page with the paper library sidebar and suggested questions" width="100%" />
 
-<br>
+NormLit also comes with an EEG guide that turns that 100-page packet into a step-by-step protocol for the BioSemi ActiveTwo, covering preparation, cap setup, gel application, recording, and cleanup. Each section has a checklist that tracks your progress across 17 steps, and the cap setup section has a clickable 10-20 electrode map that shows placement notes for each electrode. It lives at [/eeg-guide](https://v0-normlit-research-assistant-djiy.vercel.app/eeg-guide).
 
-## What it does
-
-Ask questions in natural language and get answers synthesized from your library with inline citations. Search finds passages by meaning rather than keywords, filterable by year, author, or specific papers. Select multiple papers and compare methodologies, results, or contradictions side by side.
-
-**Fig. 3. The chat.** Paper upload sidebar, cited answers.
-
-<img src="docs/images/app-chat.png" alt="NormLit chat interface with paper upload sidebar" width="100%" />
-
-<br>
-
-## Built for the lab, not just the literature
-
-NormLit ships with a complete EEG Study Guide, a step-by-step BioSemi ActiveTwo protocol born from that same 100-page instruction packet. Participant prep, cap setup, gel application, recording, cleanup. It lives at [/eeg-guide](https://v0-normlit-research-assistant-djiy.vercel.app/eeg-guide).
-
-**Fig. 4. The guide.**
-
-<img src="docs/images/app-eeg-guide.png" alt="NormLit EEG Study Guide, BioSemi ActiveTwo protocol" width="100%" />
-
-<br>
+<img src="docs/images/app-eeg-guide.png" alt="NormLit EEG guide on the cap setup section with an interactive 10-20 electrode map" width="100%" />
 
 ## How it works
 
-| Step | What happens |
-|------|--------------|
-| Ingest | PDFs are chunked and embedded with OpenAI text-embedding-3-small |
-| Store | Vectors live in Supabase PostgreSQL via pgvector |
-| Retrieve | Your question is embedded and matched with cosine similarity |
-| Answer | Claude Opus 4.8 synthesizes a response with paper citations |
+NormLit uses retrieval-augmented generation (RAG), which means the model only answers from passages pulled out of your own papers, not from whatever it remembers.
 
-| Layer | Tools |
-|-------|-------|
-| Frontend | Next.js 16, React, Tailwind CSS, shadcn/ui |
-| Backend | Next.js API Routes, Vercel AI SDK 6 |
-| Database | Supabase (PostgreSQL + pgvector) |
-| AI | Claude Opus 4.8 (chat), OpenAI embeddings (search) |
-| Deploy | Vercel |
+```mermaid
+---
+config:
+  fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif"
+  themeVariables:
+    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif"
+---
+flowchart LR
+    subgraph Upload["When you upload a paper"]
+        P["PDF"] --> T["Extract the text"]
+        T --> C["Split into ~1,000-character passages<br/>that overlap by 200"]
+        C --> E1["Turn each passage into<br/>an embedding"]
+    end
+    E1 --> DB[("Supabase<br/>Postgres + pgvector")]
+    subgraph Ask["When you ask a question"]
+        Q["Your question"] --> E2["Turn it into<br/>an embedding"]
+        E2 --> M["Find the 6 closest passages"]
+        M --> A["Claude writes an answer<br/>citing each passage"]
+    end
+    DB --> M
+```
 
-<br>
+Passages are split at sentence boundaries where possible, so a citation never points at half a sentence, and the 200-character overlap keeps an idea that spans two passages from getting lost between them. Search keeps only passages that are at least 50% similar to your question. Comparing papers works the same way, except it pulls 12 passages from just the papers you picked and lowers the bar to 30%, since a good comparison needs more context from each one.
 
-## Quick start
+### Why I picked each piece
+
+| Layer | What I used | Why | What it costs me |
+|-------|-------------|-----|------------------|
+| App | Next.js 16 and React with Tailwind and shadcn/ui | Pages and API routes live in one project, and the components are accessible out of the box | A lot of framework for what's mostly two pages |
+| AI calls | Vercel AI SDK 6 | Streams answers word by word, and switching between Claude and GPT-4o is a one-line change | Another layer between my code and the model APIs |
+| Answers | Claude Opus 4.8, with GPT-4o as a fallback | Strong at long, careful answers that stick to the sources it's given | Slower and more expensive per question than a smaller model |
+| Embeddings | OpenAI text-embedding-3-small | Cheap and accurate enough for academic text | Every paper depends on this one model, and switching means re-embedding the whole library |
+| Database | Supabase with pgvector | Papers, passages, and vector search all live in one Postgres database | Similarity search happens in SQL, which is harder to tune than a dedicated vector database |
+| Hosting | Vercel | Deploys on every push, with preview links for every branch | Serverless time limits cap how big a PDF can be processed in one request |
+
+### The data model
+
+```mermaid
+---
+config:
+  fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif"
+  themeVariables:
+    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif"
+---
+erDiagram
+    papers ||--o{ paper_chunks : "split into"
+    papers {
+        uuid id
+        text title
+        text authors
+        int year
+    }
+    paper_chunks {
+        uuid paper_id
+        text content
+        vector embedding "1536 dimensions"
+    }
+```
+
+## What I'd change next
+
+There are no accounts yet, so everyone who opens the app shares one paper library, which works for a single lab but not beyond that. Passages are split by character count, so tables and figure captions sometimes get cut in awkward places, and the next step is splitting by section instead. I'd also like to build a small set of questions with known answers from the lab's papers, so I can measure whether a change to the chunking or the similarity cutoff actually makes answers better.
+
+## Running it locally
 
 ```bash
 git clone https://github.com/selinmutlu06/NormLit.git
@@ -71,9 +97,9 @@ cd NormLit
 pnpm install
 ```
 
-Create `.env.local`:
+Create `.env.local` with your keys:
 
-```bash
+```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
@@ -81,30 +107,34 @@ OPENAI_API_KEY=your_openai_api_key
 ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
-```bash
-pnpm dev
-```
+Then run `pnpm dev`, open http://localhost:3000/chat, and drop PDFs into the sidebar. To load a whole folder at once, run `npx tsx scripts/ingest-papers.ts ./path/to/papers`, with files named like `Author (Year) - Title.pdf`.
 
-Open [localhost:3000/chat](http://localhost:3000/chat), drop PDFs into the sidebar, and start asking questions. Bulk ingestion runs from the CLI with `npx tsx scripts/ingest-papers.ts ./path/to/papers`, naming convention `Author (Year) - Title.pdf`.
+## Project structure
 
 ```
 app/
   page.tsx              landing page
-  chat/page.tsx         RAG chat interface
-  eeg-guide/page.tsx    BioSemi EEG protocol guide
+  chat/page.tsx         chat with your papers
+  eeg-guide/page.tsx    BioSemi EEG protocol
   api/
-    chat/route.ts       chat + retrieval
+    chat/route.ts       retrieval and answers
+    compare/route.ts    comparing papers
+    upload/route.ts     PDF upload and indexing
     papers/route.ts     paper library
-    compare/route.ts    cross-paper comparison
+    health/route.ts     checks which services are configured
 components/
-  chat-message.tsx      citations rendering
-  paper-sidebar.tsx     upload + filter
+  chat-message.tsx      renders answers and citations
+  paper-sidebar.tsx     upload and filters
   compare-panel.tsx     paper comparison
-lib/supabase/           DB client
-scripts/                PDF ingestion pipeline
-docs/images/            screenshots + lab photos
+  electrode-map.tsx     clickable 10-20 map
+lib/
+  ingest.ts             text extraction, chunking, embeddings
+  ai.ts                 picks the chat model
+scripts/                database schema and bulk ingestion
 ```
 
-<br>
+## License
 
-<sub>Built at Duke CNRI, for researchers who'd rather do science than paperwork. MIT License.</sub>
+MIT
+
+<sub>Built at Duke CNRI, for researchers who'd rather spend their time on the science.</sub>
