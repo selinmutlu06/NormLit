@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { AsciiEEG } from "@/components/ascii-eeg"
 import { ContentImage } from "@/components/content-image"
 import { ERPFigure } from "@/components/erp-figure"
 import { SiteFooter, SiteHeader } from "@/components/site-chrome"
@@ -29,12 +30,12 @@ const GUIDE_SECTIONS = ["Overview", "Preparation", "Cap setup", "Gel application
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="paper-grain min-h-screen bg-background">
       <SiteHeader />
 
       <main>
         {/* Hero */}
-        <section className="border-b">
+        <section className="dither-rule">
           <div className="mx-auto grid max-w-6xl gap-14 px-6 pb-20 pt-16 lg:grid-cols-12 lg:gap-10 lg:pb-24 lg:pt-24">
             <div className="lg:col-span-6">
               <h1 className="font-serif text-5xl font-normal leading-[1.05] tracking-tight text-foreground sm:text-6xl">
@@ -71,8 +72,10 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <AsciiEEG />
+
         {/* Features */}
-        <section id="features" className="scroll-mt-14 border-b">
+        <section id="features" className="dither-rule scroll-mt-14">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-12 lg:py-24">
             <h2 className="font-serif text-3xl font-normal tracking-tight sm:text-4xl lg:col-span-4">What it does</h2>
             <div className="lg:col-span-8">
@@ -104,13 +107,15 @@ export default function LandingPage() {
         </section>
 
         {/* How it works */}
-        <section id="how" className="scroll-mt-14 border-b bg-card">
+        <section id="how" className="dither-rule scroll-mt-14 bg-card">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-12 lg:py-24">
             <h2 className="font-serif text-3xl font-normal tracking-tight sm:text-4xl lg:col-span-4">How it works</h2>
             <ol className="grid gap-8 sm:grid-cols-3 lg:col-span-8">
               {STEPS.map((step, i) => (
                 <li key={step.title} className="border-t pt-4">
-                  <p className="text-sm text-muted-foreground">{i + 1}</p>
+                  <p className="overflow-hidden whitespace-nowrap font-mono text-sm text-muted-foreground">
+                    {String(i + 1).padStart(2, "0")} <span aria-hidden="true" className="opacity-50">────────────</span>
+                  </p>
                   <h3 className="mt-1 text-lg font-medium">{step.title}</h3>
                   <p className="mt-1 leading-relaxed text-muted-foreground">{step.body}</p>
                 </li>
@@ -120,7 +125,7 @@ export default function LandingPage() {
         </section>
 
         {/* EEG guide */}
-        <section className="border-b">
+        <section className="dither-rule">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-12 lg:py-24">
             <div className="lg:col-span-5">
               <h2 className="font-serif text-3xl font-normal tracking-tight sm:text-4xl">EEG guide</h2>

@@ -30,16 +30,21 @@ const x = (t: number) => PAD.left + ((t - T_MIN) / (T_MAX - T_MIN)) * (W - PAD.l
 // Negative up: −V_RANGE maps to the top of the plot.
 const y = (v: number) => PAD.top + ((v + V_RANGE) / (2 * V_RANGE)) * (H - PAD.top - PAD.bottom)
 
-function path(peaks: Peak[]) {
-  const pts: string[] = []
-  for (let t = T_MIN; t <= T_MAX; t += 4) {
-    pts.push(`${pts.length ? "L" : "M"}${x(t).toFixed(1)} ${y(wave(peaks, t)).toFixed(1)}`)
-  }
-  return pts.join(" ")
+function points(peaks: Peak[]) {
+  const pts: [number, number][] = []
+  for (let t = T_MIN; t <= T_MAX; t += 4) pts.push([x(t), y(wave(peaks, t))])
+  return pts
 }
 
-const CONSISTENT = path([...BASE, { t: 400, amp: -1.2, width: 70 }])
-const VIOLATION = path([...BASE, { t: 400, amp: -4.8, width: 72 }])
+const path = (pts: [number, number][]) =>
+  pts.map(([px, py], i) => `${i ? "L" : "M"}${px.toFixed(1)} ${py.toFixed(1)}`).join(" ")
+
+const CONSISTENT_PTS = points([...BASE, { t: 400, amp: -1.2, width: 70 }])
+const VIOLATION_PTS = points([...BASE, { t: 400, amp: -4.8, width: 72 }])
+const CONSISTENT = path(CONSISTENT_PTS)
+const VIOLATION = path(VIOLATION_PTS)
+// Region between the two traces, shaded with a dither so the N400 effect reads at a glance
+const EFFECT = `${path(VIOLATION_PTS)} ${path([...CONSISTENT_PTS].reverse()).replace(/^M/, "L")} Z`
 
 export function ERPFigure({ className }: { className?: string }) {
   const zeroY = y(0)
@@ -50,13 +55,25 @@ export function ERPFigure({ className }: { className?: string }) {
       role="img"
       aria-label="Illustrative event-related potential at Cz showing a larger N400 for norm-violating sentences"
     >
+      <defs>
+        {/* 1-bit dither fills */}
+        <pattern id="erp-dither-window" width="4" height="4" patternUnits="userSpaceOnUse">
+          <rect width="1" height="1" className="fill-foreground/55" />
+          <rect x="2" y="2" width="1" height="1" className="fill-foreground/55" />
+        </pattern>
+        <pattern id="erp-dither-effect" width="4" height="4" patternUnits="userSpaceOnUse">
+          <rect width="1" height="1" className="fill-accent" />
+          <rect x="2" y="2" width="1" height="1" className="fill-accent" />
+        </pattern>
+      </defs>
+
       {/* N400 window */}
       <rect
         x={x(300)}
         y={PAD.top}
         width={x(500) - x(300)}
         height={H - PAD.top - PAD.bottom}
-        className="fill-foreground/[0.05]"
+        fill="url(#erp-dither-window)"
       />
       <text x={(x(300) + x(500)) / 2} y={H - PAD.bottom - 8} textAnchor="middle" className="fill-muted-foreground font-sans text-[10px]">
         N400 window
@@ -87,6 +104,8 @@ export function ERPFigure({ className }: { className?: string }) {
       <text x={PAD.left - 30} y={PAD.top + 4} className="fill-muted-foreground font-sans text-[10px]">
         µV
       </text>
+
+      <path d={EFFECT} fill="url(#erp-dither-effect)" opacity={0.8} />
 
       {/* Traces */}
       <path d={CONSISTENT} fill="none" className="stroke-foreground" strokeWidth={1.5} />
